@@ -84,7 +84,7 @@ class Biblioteca(QWidget):
             for livro in livros:
                 livro_dict = livro.to_dict()
                 self.listar_livros.append(f"Titulo: {livro_dict['titulo']} - Autor: {livro_dict[r'autor']} -  Ano: ({livro_dict['ano']}) - Paginas: {livro_dict['paginas']} - Id: {livro_dict['id']}")
-            print("Livrors listados com sucesso.")
+            print("Livros listados com sucesso.")
         except Exception as e:
             print(f"Erro ao listar livros: {e}")
 

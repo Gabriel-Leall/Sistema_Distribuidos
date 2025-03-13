@@ -47,7 +47,7 @@ background-color: rgb(190, 190, 190);</string>
     <property name="geometry">
      <rect>
       <x>140</x>
-      <y>40</y>
+      <y>30</y>
       <width>191</width>
       <height>41</height>
      </rect>
@@ -187,9 +187,9 @@ color: rgb(255, 255, 255);
     <property name="geometry">
      <rect>
       <x>60</x>
-      <y>100</y>
+      <y>80</y>
       <width>271</width>
-      <height>31</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="font">
@@ -202,6 +202,27 @@ color: rgb(255, 255, 255);
     </property>
     <property name="text">
      <string>Preencha todos os campos abaixo. </string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_6">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>110</y>
+      <width>331</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 0, 0);</string>
+    </property>
+    <property name="text">
+     <string>A senha tem que ter 6 caracteres ou mais.</string>
     </property>
    </widget>
   </widget>

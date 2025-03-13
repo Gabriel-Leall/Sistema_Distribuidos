@@ -2,6 +2,7 @@ import sys
 import pyrebase
 import re
 from firebase.livros import criar_livro, listar_livros, verificar_livro, atualizar_livro, deletar_livro
+from datetime import datetime
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtWidgets import QMessageBox, QMainWindow, QApplication, QTableView, QTableWidgetItem
@@ -18,8 +19,6 @@ from interface_grafica.py.tela_inicial import Ui_Tela_Inicial
 from interface_grafica.py.tela_inicial import Ui_Tela_Inicial
 from interface_grafica.py.add_livro import Ui_Add_Livro
 from interface_grafica.py.editar_livro import Ui_Editar_Livro
-from interface_grafica.py.excluir_livro import Ui_Excluir_Livro
-from interface_grafica.py.listar_livros import Ui_Listar_Livros
 
 from firebase import config_firebase
 
@@ -36,32 +35,24 @@ class Ui_Main(QtWidgets.QWidget):
         self.stack2 = QtWidgets.QMainWindow()
         self.stack3 = QtWidgets.QMainWindow()
         self.stack4 = QtWidgets.QMainWindow()
-        self.stack5 = QtWidgets.QMainWindow()
-        self.stack6 = QtWidgets.QMainWindow()
 
         self.tela_login = Ui_Login()
         self.tela_criar_conta = Ui_Criar_Conta()
         self.tela_inicial = Ui_Tela_Inicial()
         self.tela_add_livro = Ui_Add_Livro()
         self.tela_editar_livro = Ui_Editar_Livro()
-        self.tela_excluir_livro = Ui_Excluir_Livro()
-        self.tela_listar_livros = Ui_Listar_Livros()
 
         self.tela_login.setupUi(self.stack0)
         self.tela_criar_conta.setupUi(self.stack1)
         self.tela_inicial.setupUi(self.stack2)
         self.tela_add_livro.setupUi(self.stack3)
         self.tela_editar_livro.setupUi(self.stack4)
-        self.tela_excluir_livro.setupUi(self.stack5)
-        self.tela_listar_livros.setupUi(self.stack6)
 
         self.QtStack.addWidget(self.stack0)
         self.QtStack.addWidget(self.stack1)
         self.QtStack.addWidget(self.stack2)
         self.QtStack.addWidget(self.stack3)
         self.QtStack.addWidget(self.stack4)
-        self.QtStack.addWidget(self.stack5)
-        self.QtStack.addWidget(self.stack6)
 
 class Main(Ui_Main, QMainWindow):
     def __init__(self, parent=None):
@@ -74,12 +65,12 @@ class Main(Ui_Main, QMainWindow):
         
         # Configurações da tabela na tela inicial
         self.tela_inicial.tableView.setModel(self.modelo_tabela)
-        self.tela_listar_livros.tableView.setModel(self.modelo_tabela)
         
         
         # Botões da tela de login
         self.tela_login.pushButton_criar_conta.clicked.connect(self.abrir_tela_criar_conta)
         self.tela_login.pushButton_entrar.clicked.connect(self.entrar_sistema)
+        self.tela_login.pushButton_voltar.clicked.connect(self.sair)
 
         # Botões da tela de criar conta
         self.tela_criar_conta.pushButton_criar_conta.clicked.connect(self.criar_conta)
@@ -98,14 +89,6 @@ class Main(Ui_Main, QMainWindow):
         self.tela_editar_livro.pushButton_voltar.clicked.connect(self.abrir_tela_inicial)
         self.tela_editar_livro.pushButton_add_livro.clicked.connect(self.editar_livro)
 
-        # Botões da tela excluir livro
-        self.tela_excluir_livro.pushButton_voltar.clicked.connect(self.abrir_tela_inicial)
-        self.tela_excluir_livro.pushButton_add_livro.clicked.connect(self.excluir_livro)
-        
-        # Botões da tela listar livros
-        self.tela_listar_livros.pushButton_voltar.clicked.connect(self.abrir_tela_inicial)
-        self.tela_listar_livros.pushButton_listar.clicked.connect(self.listar_livros_na_tela)
-
     def mostrar_livro_na_tela(self, livro):
         try:
             layout = self.tela_inicial.scrollAreaWidgetContents.layout()
@@ -120,6 +103,7 @@ class Main(Ui_Main, QMainWindow):
                     if widget is not None:
                         widget.deleteLater()  
 
+            id = livro.get('id', 'Desconhecido')
             titulo = livro.get('titulo', 'Desconhecido')
             autor = livro.get('autor', 'Desconhecido')
             paginas = livro.get('paginas', 'Desconhecido')
@@ -166,7 +150,7 @@ class Main(Ui_Main, QMainWindow):
                 font-size: 12pt;
                 font-weight: bold;
             """)
-            button_excluir.clicked.connect(self.excluir_livro)
+            button_excluir.clicked.connect(lambda: self.excluir_livro(livro.get('id')))
             buttons_layout.addWidget(button_excluir)
 
             layout.addLayout(buttons_layout)
@@ -175,7 +159,7 @@ class Main(Ui_Main, QMainWindow):
             print(f"Erro ao exibir livro na tela: {e}")
 
     def editar_livro(self, id_livro):
-        
+       
         self.abrir_tela_editar_livro(id_livro)
 
         livro = self.buscar_livro_por_id(id_livro)
@@ -183,57 +167,70 @@ class Main(Ui_Main, QMainWindow):
             QMessageBox.warning(self, "Erro", "Livro não encontrado.")
             return
 
-        
         self.id_livro_atual = id_livro
 
-       
-        titulo = str(livro.get('titulo', ''))
-        autor = ', '.join(livro.get('autor', '')) if isinstance(livro.get('autor'), list) else str(livro.get('autor', ''))
-        paginas = ', '.join(livro.get('paginas', '')) if isinstance(livro.get('paginas'), list) else str(livro.get('paginas', ''))
-        ano = str(livro.get('ano', ''))
-
         
+        titulo = str(livro.get('titulo', '')).strip("[]")
+        autor = str(livro.get('autor', '')).strip("[]")
+        paginas = str(livro.get('paginas', '')).strip("[]")
+        ano = str(livro.get('ano', '')).strip("[]")
+
         self.tela_editar_livro.lineEdit_titulo_livro.setText(titulo)
         self.tela_editar_livro.lineEdit_autor_principal.setText(autor)
         self.tela_editar_livro.lineEdit_quantidade_paginas.setText(paginas)
         self.tela_editar_livro.lineEdit_ano_publicacao.setText(ano)
 
-        
         try:
             self.tela_editar_livro.pushButton_add_livro.clicked.disconnect()
         except TypeError:
             pass  
 
-        
         self.tela_editar_livro.pushButton_add_livro.clicked.connect(self.salvar_edicao_livro)
 
 
-
     def salvar_edicao_livro(self):
-        
+       
         if not hasattr(self, 'id_livro_atual'):
             QMessageBox.warning(self, "Erro", "Nenhum livro foi selecionado para edição.")
             return
 
-        
         titulo_final = self.tela_editar_livro.lineEdit_titulo_livro.text().strip()
         autor_final = self.tela_editar_livro.lineEdit_autor_principal.text().strip()
         paginas_final = self.tela_editar_livro.lineEdit_quantidade_paginas.text().strip()
         ano_final = self.tela_editar_livro.lineEdit_ano_publicacao.text().strip()
 
-       
         if not titulo_final or not autor_final or not paginas_final or not ano_final:
             QMessageBox.warning(self, "Erro", "Todos os campos devem ser preenchidos.")
             return
 
+        
+        if not paginas_final.isdigit() or int(paginas_final) <= 0:
+            QMessageBox.warning(self, "Erro", "O número de páginas deve ser um número inteiro positivo.")
+            return
+
+        
+        if not ano_final.isdigit():
+            QMessageBox.warning(self, "Erro", "O ano de publicação deve conter apenas números.")
+            return
+
+        ano_int = int(ano_final)
+        from datetime import datetime
+        ano_atual = datetime.now().year
+
+        if ano_int < 1000 or ano_int > ano_atual:
+            QMessageBox.warning(self, "Erro", f"O ano de publicação deve estar entre 1000 e {ano_atual}.")
+            return
+
         try:
-            atualizar_livro(self.id_livro_atual, titulo_final, autor_final, paginas_final, ano_final)
+            
+            atualizar_livro(self.id_livro_atual, titulo_final, autor_final.strip("[]"), paginas_final.strip("[]"), ano_final.strip("[]"))
             QMessageBox.information(self, "Sucesso", f"Livro '{titulo_final}' atualizado com sucesso!")
 
-           
             self.abrir_tela_inicial()
         except Exception as e:
             self.mostrar_erro(f"Erro ao editar livro: {e}")
+
+
 
 
 
@@ -294,6 +291,8 @@ class Main(Ui_Main, QMainWindow):
 
     def abrir_tela_login(self):
         self.QtStack.setCurrentIndex(0)
+        self.tela_login.lineEdit_email.clear()
+        self.tela_login.lineEdit__senha.clear()
             
     def entrar_sistema(self):
     
@@ -321,6 +320,9 @@ class Main(Ui_Main, QMainWindow):
 
     def abrir_tela_criar_conta(self):
         self.QtStack.setCurrentIndex(1)
+        self.tela_criar_conta.lineEdit_email.clear()
+        self.tela_criar_conta.lineEdit_senha.clear()
+        self.tela_criar_conta.lineEdit_conf_senha.clear()
 
     def criar_conta(self):
         email = self.tela_criar_conta.lineEdit_email.text()
@@ -333,6 +335,10 @@ class Main(Ui_Main, QMainWindow):
 
         if not self.email_valido(email):
             QMessageBox.warning(self, "Erro", "Email inválido. Use um formato correto.")
+            return
+        
+        if len(senha) < 6 or len(conf_senha) < 6:
+            QMessageBox.warning(self, "Erro", "A senha deve ter pelo menos 6 caracteres.")
             return
 
         if senha != conf_senha:
@@ -349,37 +355,50 @@ class Main(Ui_Main, QMainWindow):
             QMessageBox.warning(self, "Erro", "Erro ao criar conta. Verifique os dados.")
 
     def adicionar_livro(self):
-        titulo = self.tela_add_livro.lineEdit_titulo_livro.text()
-        autor = self.tela_add_livro.lineEdit_autor_principal.text()
-        paginas = self.tela_add_livro.lineEdit_quantidade_paginas.text()
-        ano = self.tela_add_livro.lineEdit_ano_publicacao.text()
-        id = self.tela_add_livro.lineEdit_id_livro.text()
+       
+        titulo = self.tela_add_livro.lineEdit_titulo_livro.text().strip()
+        autor = self.tela_add_livro.lineEdit_autor_principal.text().strip()
+        paginas = self.tela_add_livro.lineEdit_quantidade_paginas.text().strip()
+        ano = self.tela_add_livro.lineEdit_ano_publicacao.text().strip()
+        id = self.tela_add_livro.lineEdit_id_livro.text().strip()
 
-        if not titulo:
-            self.mostrar_erro('Faltou informar o título.')
+        
+        if not all([titulo, autor, paginas, ano, id]):
+            self.mostrar_erro('Todos os campos devem ser preenchidos.')
             return
-        if not autor:
-            self.mostrar_erro('Faltou informar o autor.')
+
+        if not id.isdigit():
+            self.mostrar_erro('O ID do livro deve ser um número.')
             return
-        if not paginas:
-            self.mostrar_erro('Faltou informar as páginas.')
+
+       
+        if self.buscar_livro_por_id(id):
+            self.mostrar_erro(f"Já existe um livro com o ID {id}. Escolha outro ID.")
             return
-        if not ano:
-            self.mostrar_erro('Faltou informar o ano.')
+
+        if not paginas.isdigit():
+            self.mostrar_erro('O número de páginas deve ser um valor numérico.')
             return
-        if not id:
-            self.mostrar_erro('Faltou informar o ID.')
+
+        ano_atual = datetime.now().year
+        if not (ano.isdigit() and len(ano) == 4 and 0 < int(ano) <= ano_atual):
+            self.mostrar_erro(f'O ano de publicação deve ser válido.')
             return
 
         try:
+            
             criar_livro(titulo, autor, paginas, ano, id)
             QMessageBox.information(self, "Sucesso", f"Livro '{titulo}' adicionado com sucesso!")
+
             
             self.tela_add_livro.lineEdit_titulo_livro.clear()
             self.tela_add_livro.lineEdit_autor_principal.clear()
             self.tela_add_livro.lineEdit_quantidade_paginas.clear()
             self.tela_add_livro.lineEdit_ano_publicacao.clear()
             self.tela_add_livro.lineEdit_id_livro.clear()
+
+            
+            self.abrir_tela_inicial()
 
         except Exception as e:
             self.mostrar_erro(f"Erro ao adicionar livro: {e}")
@@ -399,7 +418,7 @@ class Main(Ui_Main, QMainWindow):
             for livro in livros:
                 livro_dict = livro.to_dict()
 
-                # Garante que os valores sejam strings
+                
                 titulo = str(livro_dict.get('titulo', ''))
                 autor = str(livro_dict.get('autor', ''))
                 paginas = str(livro_dict.get('paginas', ''))
@@ -412,7 +431,7 @@ class Main(Ui_Main, QMainWindow):
                 ano_item = QStandardItem(ano)
                 id_item = QStandardItem(id_livro)
 
-                # Ajusta alinhamento do texto
+                
                 titulo_item.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)
                 autor_item.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)
                 paginas_item.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
@@ -429,61 +448,31 @@ class Main(Ui_Main, QMainWindow):
 
     def abrir_tela_add_livro(self):
         self.QtStack.setCurrentIndex(3)
+        self.tela_add_livro.lineEdit_titulo_livro.clear()
+        self.tela_add_livro.lineEdit_autor_principal.clear()
+        self.tela_add_livro.lineEdit_quantidade_paginas.clear()
+        self.tela_add_livro.lineEdit_ano_publicacao.clear()
+        self.tela_add_livro.lineEdit_id_livro.clear()  
 
-    def excluir_livro(self, id_livro):
-        confirmacao = QMessageBox.question(self, "Excluir Livro", "Tem certeza que deseja excluir este livro?",
-                                        QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
-        if confirmacao == QMessageBox.Yes:
-            try:
-                config_firebase.db.child("livros").child(id_livro).remove()
-                QMessageBox.information(self, "Sucesso", "Livro excluído com sucesso!")
-                self.buscar_livro() 
-            except Exception as e:
-                print(f"Erro ao excluir livro: {e}")
-                QMessageBox.warning(self, "Erro", "Erro ao excluir livro.")
-
-    def abrir_tela_excluir_livro(self):
-        self.QtStack.setCurrentIndex(5)
-        
-    def abrir_tela_listar_livros(self):
-        self.QtStack.setCurrentIndex(6)
-        self.listar_livros_na_tela()  
-        
-        try:
-            self.tela_listar_livros.ajustar_tabela(self)
-        except Exception as e:
-            print(f"Erro ao ajustar tabela da tela listar livros: {e}")
-
-    
-
-    def excluir_livro(self):
-        autor = self.tela_excluir_livro.lineEdit_autor_principal.text()
-        id = self.tela_excluir_livro.lineEdit_id.text()
+    def excluir_livro(self, id):
 
         if not id:
             self.mostrar_erro('Faltou informar o ID do livro.')
             return
-            
-        if not autor:
-            self.mostrar_erro('Faltou informar o autor do livro.')
-            return
-        
       
         confirmacao = QMessageBox.question(self, 'Confirmação', 
-                                         f"Tem certeza que deseja excluir o livro:\n\nAutor: '{autor}'\nID: {id}",
+                                         f"Tem certeza que deseja excluir o livro:'\nID: {id}",
                                          QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         
         if confirmacao == QMessageBox.No:
             return
             
         try:
-           
             deletar_livro(id)
-            QMessageBox.information(self, "Sucesso", f"Livro do autor '{autor}' (ID: {id}) excluído com sucesso!")
+            QMessageBox.information(self, "Sucesso", f"Livro do autor (ID: {id}) excluído com sucesso!")
+            self.limpar_scroll_area()
+            self.tela_inicial.lineEdit_pesquisar.clear()
             
-            
-            self.tela_excluir_livro.lineEdit_autor_principal.clear()
-            self.tela_excluir_livro.lineEdit_id.clear()
             
             
             self.listar_livros_na_tela()
@@ -497,6 +486,9 @@ class Main(Ui_Main, QMainWindow):
         msg.setText(mensagem)
         msg.setWindowTitle("Erro")
         msg.exec_()
+
+    def sair(self):
+        QtWidgets.QApplication.quit()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

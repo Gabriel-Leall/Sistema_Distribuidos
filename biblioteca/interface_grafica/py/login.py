@@ -13,14 +13,11 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_Login(object):
     def setupUi(self, MainWindow):
-        # Configurações básicas da janela principal
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(464, 435)
         MainWindow.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-        
-        # Título "Entrar" no topo da tela
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(160, 40, 151, 61))
         font = QtGui.QFont()
@@ -30,8 +27,6 @@ class Ui_Login(object):
         self.label.setFont(font)
         self.label.setWordWrap(False)
         self.label.setObjectName("label")
-        
-        # Campo para inserir o email do usuário
         self.horizontalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
         self.horizontalLayoutWidget.setGeometry(QtCore.QRect(60, 120, 351, 51))
         self.horizontalLayoutWidget.setObjectName("horizontalLayoutWidget")
@@ -47,8 +42,6 @@ class Ui_Login(object):
         self.lineEdit_email = QtWidgets.QLineEdit(self.horizontalLayoutWidget)
         self.lineEdit_email.setObjectName("lineEdit_email")
         self.horizontalLayout.addWidget(self.lineEdit_email)
-        
-        # Campo para inserir a senha do usuário (com texto oculto)
         self.horizontalLayoutWidget_2 = QtWidgets.QWidget(self.centralwidget)
         self.horizontalLayoutWidget_2.setGeometry(QtCore.QRect(60, 180, 351, 51))
         self.horizontalLayoutWidget_2.setObjectName("horizontalLayoutWidget_2")
@@ -62,11 +55,9 @@ class Ui_Login(object):
         self.label_3.setObjectName("label_3")
         self.horizontalLayout_2.addWidget(self.label_3)
         self.lineEdit__senha = QtWidgets.QLineEdit(self.horizontalLayoutWidget_2)
-        self.lineEdit__senha.setEchoMode(QtWidgets.QLineEdit.Password)  # Oculta o texto da senha
+        self.lineEdit__senha.setEchoMode(QtWidgets.QLineEdit.Password)
         self.lineEdit__senha.setObjectName("lineEdit__senha")
         self.horizontalLayout_2.addWidget(self.lineEdit__senha)
-        
-        # Botão para realizar o login
         self.pushButton_entrar = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_entrar.setGeometry(QtCore.QRect(60, 240, 181, 51))
         font = QtGui.QFont()
@@ -79,8 +70,6 @@ class Ui_Login(object):
 "color: rgb(255, 255, 255);\n"
 " border-radius: 8px;")
         self.pushButton_entrar.setObjectName("pushButton_entrar")
-        
-        # Botão para ir para a tela de criar conta
         self.pushButton_criar_conta = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_criar_conta.setGeometry(QtCore.QRect(250, 240, 161, 51))
         font = QtGui.QFont()
@@ -93,8 +82,17 @@ class Ui_Login(object):
 "color: rgb(255, 255, 255);\n"
 " border-radius: 8px;")
         self.pushButton_criar_conta.setObjectName("pushButton_criar_conta")
-        
-        # Configurações da barra de menu e status
+        self.pushButton_voltar = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_voltar.setGeometry(QtCore.QRect(20, 350, 111, 31))
+        font = QtGui.QFont()
+        font.setBold(True)
+        font.setWeight(75)
+        self.pushButton_voltar.setFont(font)
+        self.pushButton_voltar.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.pushButton_voltar.setStyleSheet(" border-radius: 8px;\n"
+"background-color: rgb(255, 0, 0);\n"
+"color: rgb(255, 255, 255);")
+        self.pushButton_voltar.setObjectName("pushButton_voltar")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 464, 26))
@@ -108,7 +106,6 @@ class Ui_Login(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
-        # Definição dos textos para todos os elementos da interface
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.label.setText(_translate("MainWindow", "Entrar"))
@@ -116,6 +113,7 @@ class Ui_Login(object):
         self.label_3.setText(_translate("MainWindow", "Senha: "))
         self.pushButton_entrar.setText(_translate("MainWindow", "Entrar"))
         self.pushButton_criar_conta.setText(_translate("MainWindow", "Criar conta"))
+        self.pushButton_voltar.setText(_translate("MainWindow", "Sair"))
 
 
 if __name__ == "__main__":

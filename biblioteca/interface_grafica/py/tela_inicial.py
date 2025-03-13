@@ -41,7 +41,8 @@ class Ui_Tela_Inicial(object):
         self.pushButton_voltar.setFont(font)
         self.pushButton_voltar.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.pushButton_voltar.setStyleSheet(" border-radius: 8px;\n"
-"background-color: rgb(190, 190, 190);")
+"background-color: rgb(255, 0, 0);\n"
+"color: rgb(255, 255, 255);")
         self.pushButton_voltar.setObjectName("pushButton_voltar")
         self.lineEdit_pesquisar = QtWidgets.QLineEdit(self.centralwidget)
         self.lineEdit_pesquisar.setGeometry(QtCore.QRect(490, 300, 261, 31))
@@ -95,7 +96,8 @@ class Ui_Tela_Inicial(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.pushButton_add_livro.setText(_translate("MainWindow", "Adicionar livro"))
-        self.pushButton_voltar.setText(_translate("MainWindow", "Voltar"))
+        self.pushButton_voltar.setText(_translate("MainWindow", "Sair do sistema"))
+        self.lineEdit_pesquisar.setPlaceholderText(_translate("MainWindow", "Digite o ID do livro..."))
         self.pushButton_busca.setText(_translate("MainWindow", "Buscar"))
         self.label.setText(_translate("MainWindow", " Livros cadastrados"))
         self.label_2.setText(_translate("MainWindow", "Buscar livro"))

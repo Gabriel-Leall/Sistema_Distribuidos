@@ -75,10 +75,11 @@ color: rgb(255, 255, 255);
     </property>
     <property name="styleSheet">
      <string notr="true"> border-radius: 8px;
-background-color: rgb(190, 190, 190);</string>
+background-color: rgb(255, 0, 0);
+color: rgb(255, 255, 255);</string>
     </property>
     <property name="text">
-     <string>Voltar</string>
+     <string>Sair do sistema</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="lineEdit_pesquisar">
@@ -89,6 +90,9 @@ background-color: rgb(190, 190, 190);</string>
       <width>261</width>
       <height>31</height>
      </rect>
+    </property>
+    <property name="placeholderText">
+     <string>Digite o ID do livro...</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_busca">

@@ -13,11 +13,14 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_Editar_Livro(object):
     def setupUi(self, MainWindow):
+        # Configurações básicas da janela principal
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(636, 444)
         MainWindow.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
+        
+        # Título da página "Editar Livro"
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(210, 10, 241, 51))
         font = QtGui.QFont()
@@ -26,6 +29,8 @@ class Ui_Editar_Livro(object):
         font.setWeight(75)
         self.label.setFont(font)
         self.label.setObjectName("label")
+        
+        # Campo para o ano de publicação do livro
         self.horizontalLayoutWidget_4 = QtWidgets.QWidget(self.centralwidget)
         self.horizontalLayoutWidget_4.setGeometry(QtCore.QRect(50, 230, 541, 51))
         self.horizontalLayoutWidget_4.setObjectName("horizontalLayoutWidget_4")
@@ -41,6 +46,8 @@ class Ui_Editar_Livro(object):
         self.lineEdit_ano_publicacao = QtWidgets.QLineEdit(self.horizontalLayoutWidget_4)
         self.lineEdit_ano_publicacao.setObjectName("lineEdit_ano_publicacao")
         self.horizontalLayout_4.addWidget(self.lineEdit_ano_publicacao)
+        
+        # Campo para o título do livro
         self.horizontalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
         self.horizontalLayoutWidget.setGeometry(QtCore.QRect(50, 80, 541, 51))
         self.horizontalLayoutWidget.setObjectName("horizontalLayoutWidget")
@@ -56,6 +63,8 @@ class Ui_Editar_Livro(object):
         self.lineEdit_titulo_livro = QtWidgets.QLineEdit(self.horizontalLayoutWidget)
         self.lineEdit_titulo_livro.setObjectName("lineEdit_titulo_livro")
         self.horizontalLayout.addWidget(self.lineEdit_titulo_livro)
+        
+        # Campo para o autor principal do livro
         self.horizontalLayoutWidget_2 = QtWidgets.QWidget(self.centralwidget)
         self.horizontalLayoutWidget_2.setGeometry(QtCore.QRect(50, 130, 541, 51))
         self.horizontalLayoutWidget_2.setObjectName("horizontalLayoutWidget_2")
@@ -71,6 +80,8 @@ class Ui_Editar_Livro(object):
         self.lineEdit_autor_principal = QtWidgets.QLineEdit(self.horizontalLayoutWidget_2)
         self.lineEdit_autor_principal.setObjectName("lineEdit_autor_principal")
         self.horizontalLayout_2.addWidget(self.lineEdit_autor_principal)
+        
+        # Campo para a quantidade de páginas do livro
         self.horizontalLayoutWidget_3 = QtWidgets.QWidget(self.centralwidget)
         self.horizontalLayoutWidget_3.setGeometry(QtCore.QRect(50, 180, 541, 51))
         self.horizontalLayoutWidget_3.setObjectName("horizontalLayoutWidget_3")
@@ -86,6 +97,8 @@ class Ui_Editar_Livro(object):
         self.lineEdit_quantidade_paginas = QtWidgets.QLineEdit(self.horizontalLayoutWidget_3)
         self.lineEdit_quantidade_paginas.setObjectName("lineEdit_quantidade_paginas")
         self.horizontalLayout_3.addWidget(self.lineEdit_quantidade_paginas)
+        
+        # Botão para voltar à tela anterior
         self.pushButton_voltar = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_voltar.setGeometry(QtCore.QRect(50, 300, 121, 41))
         font = QtGui.QFont()
@@ -96,6 +109,8 @@ class Ui_Editar_Livro(object):
         self.pushButton_voltar.setStyleSheet(" border-radius: 8px;\n"
 "background-color: rgb(190, 190, 190);")
         self.pushButton_voltar.setObjectName("pushButton_voltar")
+        
+        # Botão para confirmar a edição do livro
         self.pushButton_add_livro = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_add_livro.setGeometry(QtCore.QRect(430, 300, 151, 51))
         font = QtGui.QFont()
@@ -108,6 +123,8 @@ class Ui_Editar_Livro(object):
 "color: rgb(255, 255, 255);\n"
 " border-radius: 8px;")
         self.pushButton_add_livro.setObjectName("pushButton_add_livro")
+        
+        # Configurações da barra de menu e status
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 636, 26))
@@ -121,6 +138,7 @@ class Ui_Editar_Livro(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
+        # Definição dos textos para todos os elementos da interface
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.label.setText(_translate("MainWindow", "Editar Livro"))

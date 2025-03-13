@@ -13,11 +13,14 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_Excluir_Livro(object):
     def setupUi(self, MainWindow):
+        # Configurações básicas da janela principal
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(636, 331)  # Usando a altura original do UI
         MainWindow.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
+        
+        # Título da página "Excluir Livro"
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(220, 30, 241, 51))
         font = QtGui.QFont()
@@ -63,7 +66,7 @@ class Ui_Excluir_Livro(object):
         self.lineEdit_id.setPlaceholderText("Informe o ID do livro")
         self.horizontalLayout_2.addWidget(self.lineEdit_id)
         
-        # Botões
+        # Botão para voltar à tela anterior
         self.pushButton_voltar = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_voltar.setGeometry(QtCore.QRect(50, 210, 121, 41))
         font = QtGui.QFont()
@@ -75,6 +78,7 @@ class Ui_Excluir_Livro(object):
 "background-color: rgb(190, 190, 190);")
         self.pushButton_voltar.setObjectName("pushButton_voltar")
         
+        # Botão para executar a exclusão do livro
         self.pushButton_add_livro = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_add_livro.setGeometry(QtCore.QRect(430, 210, 151, 51))
         font = QtGui.QFont()
@@ -89,6 +93,7 @@ class Ui_Excluir_Livro(object):
 " border-radius: 8px;")
         self.pushButton_add_livro.setObjectName("pushButton_add_livro")
         
+        # Configurações da barra de menu e status
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 636, 26))
@@ -102,6 +107,7 @@ class Ui_Excluir_Livro(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
+        # Definição dos textos para todos os elementos da interface
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.label.setText(_translate("MainWindow", "Excluir Livro"))

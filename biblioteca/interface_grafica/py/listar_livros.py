@@ -11,13 +11,14 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_Listar_Livros(object):
     def setupUi(self, MainWindow):
+        # Configurações básicas da janela principal
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(637, 445)
         MainWindow.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         
-        # Título da página
+        # Título da página - "Listar Livros" no topo da tela
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(210, 20, 241, 51))
         font = QtGui.QFont()
@@ -27,21 +28,26 @@ class Ui_Listar_Livros(object):
         self.label.setFont(font)
         self.label.setObjectName("label")
         
-        # Tabela para mostrar os livros
+        # Tabela para mostrar os livros cadastrados no sistema
         self.tableView = QtWidgets.QTableView(self.centralwidget)
         self.tableView.setGeometry(QtCore.QRect(50, 150, 541, 231))
         self.tableView.setObjectName("tableView")
         
-        # Configurações básicas da tabela (que não dependem do modelo)
+        # Configurações básicas da tabela (comportamento)
+        # Desativa edição direta na tabela (somente visualização)
         self.tableView.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        # Permite selecionar linhas inteiras ao invés de células individuais
         self.tableView.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        # Ativa cores alternadas nas linhas para melhor visualização
         self.tableView.setAlternatingRowColors(True)
         
-        # Estilo para o cabeçalho e linhas alternadas
+        # Estilo para o cabeçalho e linhas alternadas (visual)
+        # Cabeçalho com fundo cinza claro e texto em negrito
         self.tableView.horizontalHeader().setStyleSheet("QHeaderView::section { background-color: #E0E0E0; font-weight: bold; }")
+        # Cores alternadas para as linhas e destaque azul para seleção
         self.tableView.setStyleSheet("QTableView { alternate-background-color: #F0F0F0; selection-background-color: #007BFF; }")
         
-        # Botão para listar livros
+        # Botão para atualizar a lista de livros na tabela
         self.pushButton_listar = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_listar.setGeometry(QtCore.QRect(250, 90, 151, 41))
         font = QtGui.QFont()
@@ -55,7 +61,7 @@ class Ui_Listar_Livros(object):
 " border-radius: 8px;")
         self.pushButton_listar.setObjectName("pushButton_listar")
         
-        # Botão para voltar à tela inicial
+        # Botão para voltar à tela inicial do sistema
         self.pushButton_voltar = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_voltar.setGeometry(QtCore.QRect(50, 390, 121, 41))
         font = QtGui.QFont()
@@ -67,6 +73,7 @@ class Ui_Listar_Livros(object):
 "background-color: rgb(190, 190, 190);")
         self.pushButton_voltar.setObjectName("pushButton_voltar")
         
+        # Configurações da barra de menu e status
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 637, 26))
@@ -80,6 +87,7 @@ class Ui_Listar_Livros(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
+        # Definição dos textos para todos os elementos da interface
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Listar Livros"))
         self.label.setText(_translate("MainWindow", "Listar Livros"))
@@ -87,7 +95,7 @@ class Ui_Listar_Livros(object):
         self.pushButton_voltar.setText(_translate("MainWindow", "Voltar"))
         
     def ajustar_tabela(self, MainWindow):
-        """Ajusta o tamanho da tabela quando a janela for redimensionada"""
+        """Ajusta o tamanho e as configurações da tabela quando a janela for redimensionada"""
         # Verificando se a tabela tem um modelo válido
         if self.tableView.model() is None:
             return  # Se não tiver modelo, não faz nada
@@ -95,8 +103,8 @@ class Ui_Listar_Livros(object):
         # Verificando se o modelo tem colunas suficientes antes de configurar colunas específicas
         try:
             # Configurando o comportamento das colunas (só pode ser feito quando o modelo está definido)
-            self.tableView.horizontalHeader().setStretchLastSection(False)
-            self.tableView.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
+            self.tableView.horizontalHeader().setStretchLastSection(False)  # Desativa expansão automática da última coluna
+            self.tableView.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)  # Padrão: expandir todas
             
             # Configurando estilos específicos para cada coluna
             self.tableView.horizontalHeader().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)  # Título estica
@@ -112,15 +120,15 @@ class Ui_Listar_Livros(object):
         except Exception as e:
             print(f"Erro ao configurar colunas da tabela: {e}")
             
-        # Calcula as margens para manter espaço em todos os lados
-        margem_horizontal = 50
-        margem_vertical = 150
+        # Calcula as margens para manter espaço em todos os lados da tabela
+        margem_horizontal = 50  # Espaço de 50px nas laterais
+        margem_vertical = 150   # Espaço de 150px no topo (para título e botão)
         
         # Calculando as dimensões ideais com base no tamanho atual da janela
-        table_width = self.centralwidget.width() - (margem_horizontal * 2)
-        table_height = self.centralwidget.height() - margem_vertical - 70  # 70 para espaço abaixo
-        table_x = margem_horizontal
-        table_y = margem_vertical
+        table_width = self.centralwidget.width() - (margem_horizontal * 2)  # Largura total menos margens
+        table_height = self.centralwidget.height() - margem_vertical - 70   # Altura total menos margens (70 para espaço abaixo)
+        table_x = margem_horizontal  # Posição X da tabela
+        table_y = margem_vertical    # Posição Y da tabela
         
         # Aplicando a nova geometria à tabela
         self.tableView.setGeometry(QtCore.QRect(table_x, table_y, table_width, table_height))

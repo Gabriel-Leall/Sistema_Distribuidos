@@ -13,11 +13,14 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_Criar_Conta(object):
     def setupUi(self, MainWindow):
+        # Configurações básicas da janela principal
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(465, 518)
         MainWindow.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
+        
+        # Botão para voltar à tela de login
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton.setGeometry(QtCore.QRect(30, 420, 111, 31))
         font = QtGui.QFont()
@@ -28,6 +31,8 @@ class Ui_Criar_Conta(object):
         self.pushButton.setStyleSheet(" border-radius: 8px;\n"
 "background-color: rgb(190, 190, 190);")
         self.pushButton.setObjectName("pushButton")
+        
+        # Título da página "Criar Conta"
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(140, 40, 191, 41))
         font = QtGui.QFont()
@@ -36,6 +41,8 @@ class Ui_Criar_Conta(object):
         font.setWeight(75)
         self.label.setFont(font)
         self.label.setObjectName("label")
+        
+        # Campo para inserir o email do usuário
         self.horizontalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
         self.horizontalLayoutWidget.setGeometry(QtCore.QRect(60, 140, 351, 51))
         self.horizontalLayoutWidget.setObjectName("horizontalLayoutWidget")
@@ -51,6 +58,8 @@ class Ui_Criar_Conta(object):
         self.lineEdit_email = QtWidgets.QLineEdit(self.horizontalLayoutWidget)
         self.lineEdit_email.setObjectName("lineEdit_email")
         self.horizontalLayout.addWidget(self.lineEdit_email)
+        
+        # Campo para inserir a senha do usuário
         self.horizontalLayoutWidget_2 = QtWidgets.QWidget(self.centralwidget)
         self.horizontalLayoutWidget_2.setGeometry(QtCore.QRect(60, 200, 351, 51))
         self.horizontalLayoutWidget_2.setObjectName("horizontalLayoutWidget_2")
@@ -65,9 +74,11 @@ class Ui_Criar_Conta(object):
         self.horizontalLayout_2.addWidget(self.label_3)
         self.lineEdit_senha = QtWidgets.QLineEdit(self.horizontalLayoutWidget_2)
         self.lineEdit_senha.setEnabled(True)
-        self.lineEdit_senha.setEchoMode(QtWidgets.QLineEdit.Password)
+        self.lineEdit_senha.setEchoMode(QtWidgets.QLineEdit.Password)  # Oculta o texto da senha
         self.lineEdit_senha.setObjectName("lineEdit_senha")
         self.horizontalLayout_2.addWidget(self.lineEdit_senha)
+        
+        # Campo para confirmar a senha (verificação)
         self.horizontalLayoutWidget_3 = QtWidgets.QWidget(self.centralwidget)
         self.horizontalLayoutWidget_3.setGeometry(QtCore.QRect(60, 260, 351, 51))
         self.horizontalLayoutWidget_3.setObjectName("horizontalLayoutWidget_3")
@@ -81,9 +92,11 @@ class Ui_Criar_Conta(object):
         self.label_4.setObjectName("label_4")
         self.horizontalLayout_3.addWidget(self.label_4)
         self.lineEdit_conf_senha = QtWidgets.QLineEdit(self.horizontalLayoutWidget_3)
-        self.lineEdit_conf_senha.setEchoMode(QtWidgets.QLineEdit.Password)
+        self.lineEdit_conf_senha.setEchoMode(QtWidgets.QLineEdit.Password)  # Oculta o texto da confirmação
         self.lineEdit_conf_senha.setObjectName("lineEdit_conf_senha")
         self.horizontalLayout_3.addWidget(self.lineEdit_conf_senha)
+        
+        # Botão para criar a nova conta
         self.pushButton_criar_conta = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_criar_conta.setGeometry(QtCore.QRect(160, 340, 161, 51))
         font = QtGui.QFont()
@@ -96,13 +109,17 @@ class Ui_Criar_Conta(object):
 "color: rgb(255, 255, 255);\n"
 " border-radius: 8px;")
         self.pushButton_criar_conta.setObjectName("pushButton_criar_conta")
+        
+        # Mensagem de instrução para o usuário
         self.label_5 = QtWidgets.QLabel(self.centralwidget)
         self.label_5.setGeometry(QtCore.QRect(60, 100, 271, 31))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.label_5.setFont(font)
-        self.label_5.setStyleSheet("color: rgb(255, 0, 0);")
+        self.label_5.setStyleSheet("color: rgb(255, 0, 0);")  # Texto em vermelho para destaque
         self.label_5.setObjectName("label_5")
+        
+        # Configurações da barra de menu e status
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 465, 26))
@@ -116,6 +133,7 @@ class Ui_Criar_Conta(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
+        # Definição dos textos para todos os elementos da interface
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.pushButton.setText(_translate("MainWindow", "Voltar"))

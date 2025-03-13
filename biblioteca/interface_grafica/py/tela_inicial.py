@@ -13,38 +13,16 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_Tela_Inicial(object):
     def setupUi(self, MainWindow):
-        # Configurações básicas da janela principal
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(637, 600)
+        MainWindow.resize(917, 675)
         MainWindow.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-        
-        # Tabela para exibição dos livros cadastrados
         self.tableView = QtWidgets.QTableView(self.centralwidget)
-        self.tableView.setGeometry(QtCore.QRect(230, 90, 381, 441))
+        self.tableView.setGeometry(QtCore.QRect(20, 90, 851, 191))
         self.tableView.setObjectName("tableView")
-        
-        # Configurações básicas da tabela (que não dependem do modelo)
-        self.tableView.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
-        self.tableView.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
-        self.tableView.setAlternatingRowColors(True)
-        
-        # Estilo para o cabeçalho e linhas alternadas
-        self.tableView.horizontalHeader().setStyleSheet("QHeaderView::section { background-color: #E0E0E0; font-weight: bold; }")
-        self.tableView.setStyleSheet("QTableView { alternate-background-color: #F0F0F0; selection-background-color: #007BFF; }")
-        
-        # Ajustando tamanho e posição para melhor visualização
-        table_width = 381
-        table_height = 441
-        table_x = 200
-        table_y = 90
-        self.tableView.setGeometry(QtCore.QRect(table_x, table_y, table_width, table_height))
-        self.tableView.setMinimumWidth(380)
-        
-        # Botão para adicionar livro
         self.pushButton_add_livro = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_add_livro.setGeometry(QtCore.QRect(40, 60, 151, 51))
+        self.pushButton_add_livro.setGeometry(QtCore.QRect(720, 20, 151, 51))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
@@ -55,38 +33,8 @@ class Ui_Tela_Inicial(object):
 "color: rgb(255, 255, 255);\n"
 " border-radius: 8px;")
         self.pushButton_add_livro.setObjectName("pushButton_add_livro")
-        
-        # Botão para editar livro
-        self.pushButton_editar_livro = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_editar_livro.setGeometry(QtCore.QRect(40, 120, 151, 51))
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
-        self.pushButton_editar_livro.setFont(font)
-        self.pushButton_editar_livro.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.pushButton_editar_livro.setStyleSheet("background-color: rgb(85, 170, 255);\n"
-"color: rgb(255, 255, 255);\n"
-" border-radius: 8px;")
-        self.pushButton_editar_livro.setObjectName("pushButton_editar_livro")
-        
-        # Botão para excluir livro
-        self.pushButton_excluir_livro = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_excluir_livro.setGeometry(QtCore.QRect(40, 180, 151, 51))
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
-        self.pushButton_excluir_livro.setFont(font)
-        self.pushButton_excluir_livro.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.pushButton_excluir_livro.setStyleSheet("background-color: rgb(85, 170, 255);\n"
-"color: rgb(255, 255, 255);\n"
-" border-radius: 8px;")
-        self.pushButton_excluir_livro.setObjectName("pushButton_excluir_livro")
-        
-        # Botão para voltar à tela de login
         self.pushButton_voltar = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_voltar.setGeometry(QtCore.QRect(50, 490, 111, 31))
+        self.pushButton_voltar.setGeometry(QtCore.QRect(30, 580, 111, 31))
         font = QtGui.QFont()
         font.setBold(True)
         font.setWeight(75)
@@ -95,15 +43,11 @@ class Ui_Tela_Inicial(object):
         self.pushButton_voltar.setStyleSheet(" border-radius: 8px;\n"
 "background-color: rgb(190, 190, 190);")
         self.pushButton_voltar.setObjectName("pushButton_voltar")
-        
-        # Campo de busca/pesquisa
         self.lineEdit_pesquisar = QtWidgets.QLineEdit(self.centralwidget)
-        self.lineEdit_pesquisar.setGeometry(QtCore.QRect(240, 50, 261, 21))
+        self.lineEdit_pesquisar.setGeometry(QtCore.QRect(490, 300, 261, 31))
         self.lineEdit_pesquisar.setObjectName("lineEdit_pesquisar")
-        
-        # Botão para buscar/pesquisar livros
         self.pushButton_busca = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_busca.setGeometry(QtCore.QRect(510, 50, 101, 31))
+        self.pushButton_busca.setGeometry(QtCore.QRect(770, 300, 101, 31))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
@@ -114,33 +58,30 @@ class Ui_Tela_Inicial(object):
 "color: rgb(255, 255, 255);\n"
 " border-radius: 8px;")
         self.pushButton_busca.setObjectName("pushButton_busca")
-        
-        # Título da página (Livros cadastrados)
         self.label = QtWidgets.QLabel(self.centralwidget)
-        self.label.setGeometry(QtCore.QRect(340, 0, 181, 31))
+        self.label.setGeometry(QtCore.QRect(20, 40, 201, 31))
         font = QtGui.QFont()
-        font.setPointSize(12)
+        font.setPointSize(14)
         self.label.setFont(font)
         self.label.setObjectName("label")
-        
-        # Botão para listar todos os livros
-        self.pushButton_listar_livro = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_listar_livro.setGeometry(QtCore.QRect(40, 240, 151, 51))
+        self.scrollArea = QtWidgets.QScrollArea(self.centralwidget)
+        self.scrollArea.setGeometry(QtCore.QRect(20, 350, 851, 201))
+        self.scrollArea.setStyleSheet("background-color: rgb(234, 234, 234);")
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollArea.setObjectName("scrollArea")
+        self.scrollAreaWidgetContents = QtWidgets.QWidget()
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 849, 199))
+        self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
+        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
+        self.label_2 = QtWidgets.QLabel(self.centralwidget)
+        self.label_2.setGeometry(QtCore.QRect(20, 300, 121, 31))
         font = QtGui.QFont()
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
-        self.pushButton_listar_livro.setFont(font)
-        self.pushButton_listar_livro.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.pushButton_listar_livro.setStyleSheet("background-color: rgb(85, 170, 255);\n"
-"color: rgb(255, 255, 255);\n"
-" border-radius: 8px;")
-        self.pushButton_listar_livro.setObjectName("pushButton_listar_livro")
-        
-        # Configurações da barra de menu e status
+        font.setPointSize(14)
+        self.label_2.setFont(font)
+        self.label_2.setObjectName("label_2")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 637, 26))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 917, 26))
         self.menubar.setObjectName("menubar")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
@@ -151,36 +92,13 @@ class Ui_Tela_Inicial(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
-        # Definição dos textos para todos os elementos da interface
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.pushButton_add_livro.setText(_translate("MainWindow", "Adicionar livro"))
-        self.pushButton_editar_livro.setText(_translate("MainWindow", " Editar livro"))
-        self.pushButton_excluir_livro.setText(_translate("MainWindow", "Excluir livro"))
         self.pushButton_voltar.setText(_translate("MainWindow", "Voltar"))
         self.pushButton_busca.setText(_translate("MainWindow", "Buscar"))
-        self.pushButton_listar_livro.setText(_translate("MainWindow", "Listar Livro"))
         self.label.setText(_translate("MainWindow", " Livros cadastrados"))
-        
-    def ajustar_tabela(self, MainWindow):
-        if self.tableView.model() is None:
-            return             
-        try:
-            self.tableView.horizontalHeader().setStretchLastSection(False)
-            self.tableView.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
-            
-            self.tableView.horizontalHeader().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)  # Título estica
-            self.tableView.horizontalHeader().setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)  # Autor estica
-            self.tableView.horizontalHeader().setSectionResizeMode(2, QtWidgets.QHeaderView.Fixed)    # Páginas fixo
-            self.tableView.horizontalHeader().setSectionResizeMode(3, QtWidgets.QHeaderView.Fixed)    # Ano fixo
-            self.tableView.horizontalHeader().setSectionResizeMode(4, QtWidgets.QHeaderView.Fixed)    # ID fixo
-            
-            self.tableView.horizontalHeader().resizeSection(2, 70)  # Páginas
-            self.tableView.horizontalHeader().resizeSection(3, 70)  # Ano
-            self.tableView.horizontalHeader().resizeSection(4, 70)  # ID
-        except Exception as e:
-            print(f"Erro ao configurar colunas da tabela: {e}")
-        
+        self.label_2.setText(_translate("MainWindow", "Buscar livro"))
 
 
 if __name__ == "__main__":

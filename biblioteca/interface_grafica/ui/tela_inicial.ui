@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>637</width>
-    <height>600</height>
+    <width>917</width>
+    <height>675</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,18 +20,18 @@
    <widget class="QTableView" name="tableView">
     <property name="geometry">
      <rect>
-      <x>230</x>
+      <x>20</x>
       <y>90</y>
-      <width>381</width>
-      <height>441</height>
+      <width>851</width>
+      <height>191</height>
      </rect>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_add_livro">
     <property name="geometry">
      <rect>
-      <x>40</x>
-      <y>60</y>
+      <x>720</x>
+      <y>20</y>
       <width>151</width>
       <height>51</height>
      </rect>
@@ -55,67 +55,11 @@ color: rgb(255, 255, 255);
      <string>Adicionar livro</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_editar_livro">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>120</y>
-      <width>151</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>10</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="cursor">
-     <cursorShape>PointingHandCursor</cursorShape>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: rgb(85, 170, 255);
-color: rgb(255, 255, 255);
- border-radius: 8px;</string>
-    </property>
-    <property name="text">
-     <string> Editar livro</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton_excluir_livro">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>180</y>
-      <width>151</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>10</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="cursor">
-     <cursorShape>PointingHandCursor</cursorShape>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: rgb(85, 170, 255);
-color: rgb(255, 255, 255);
- border-radius: 8px;</string>
-    </property>
-    <property name="text">
-     <string>Excluir livro</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="pushButton_voltar">
     <property name="geometry">
      <rect>
-      <x>50</x>
-      <y>490</y>
+      <x>30</x>
+      <y>580</y>
       <width>111</width>
       <height>31</height>
      </rect>
@@ -140,18 +84,18 @@ background-color: rgb(190, 190, 190);</string>
    <widget class="QLineEdit" name="lineEdit_pesquisar">
     <property name="geometry">
      <rect>
-      <x>240</x>
-      <y>50</y>
+      <x>490</x>
+      <y>300</y>
       <width>261</width>
-      <height>21</height>
+      <height>31</height>
      </rect>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_busca">
     <property name="geometry">
      <rect>
-      <x>510</x>
-      <y>40</y>
+      <x>770</x>
+      <y>300</y>
       <width>101</width>
       <height>31</height>
      </rect>
@@ -178,47 +122,63 @@ color: rgb(255, 255, 255);
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>310</x>
-      <y>0</y>
-      <width>181</width>
+      <x>20</x>
+      <y>40</y>
+      <width>201</width>
       <height>31</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>12</pointsize>
+      <pointsize>14</pointsize>
      </font>
     </property>
     <property name="text">
      <string> Livros cadastrados</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_listar_livro">
+   <widget class="QScrollArea" name="scrollArea">
     <property name="geometry">
      <rect>
-      <x>40</x>
-      <y>240</y>
-      <width>151</width>
-      <height>51</height>
+      <x>20</x>
+      <y>350</y>
+      <width>851</width>
+      <height>201</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(234, 234, 234);</string>
+    </property>
+    <property name="widgetResizable">
+     <bool>true</bool>
+    </property>
+    <widget class="QWidget" name="scrollAreaWidgetContents">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>849</width>
+       <height>199</height>
+      </rect>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>300</y>
+      <width>121</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>10</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
+      <pointsize>14</pointsize>
      </font>
     </property>
-    <property name="cursor">
-     <cursorShape>PointingHandCursor</cursorShape>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: rgb(85, 170, 255);
-color: rgb(255, 255, 255);
- border-radius: 8px;</string>
-    </property>
     <property name="text">
-     <string>Listar Livro</string>
+     <string>Buscar livro</string>
     </property>
    </widget>
   </widget>
@@ -227,8 +187,8 @@ color: rgb(255, 255, 255);
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>637</width>
-     <height>21</height>
+     <width>917</width>
+     <height>26</height>
     </rect>
    </property>
   </widget>

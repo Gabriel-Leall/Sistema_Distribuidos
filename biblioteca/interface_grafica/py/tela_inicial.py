@@ -144,14 +144,9 @@ class Ui_Tela_Inicial(object):
         self.label.setText(_translate("MainWindow", " Livros cadastrados"))
         
     def ajustar_tabela(self, MainWindow):
-        """Ajusta o tamanho da tabela quando a janela for redimensionada"""
-        # Verificando se a tabela tem um modelo válido
         if self.tableView.model() is None:
-            return  # Se não tiver modelo, não faz nada
-            
-        # Verificando se o modelo tem colunas suficientes antes de configurar colunas específicas
+            return             
         try:
-            # Configurando o comportamento das colunas (só pode ser feito quando o modelo está definido)
             self.tableView.horizontalHeader().setStretchLastSection(False)
             self.tableView.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
             
@@ -169,14 +164,6 @@ class Ui_Tela_Inicial(object):
         except Exception as e:
             print(f"Erro ao configurar colunas da tabela: {e}")
         
-        # Calculando as dimensões ideais com base no tamanho atual da janela
-        table_width = self.centralwidget.width() - 210  # Mantém espaço para os botões à esquerda
-        table_height = self.centralwidget.height() - 120  # Mantém espaço para os elementos acima
-        table_x = 200  # Posição X da tabela
-        table_y = 90   # Posição Y da tabela
-        
-        # Aplicando a nova geometria à tabela
-        self.tableView.setGeometry(QtCore.QRect(table_x, table_y, table_width, table_height))
 
 
 if __name__ == "__main__":

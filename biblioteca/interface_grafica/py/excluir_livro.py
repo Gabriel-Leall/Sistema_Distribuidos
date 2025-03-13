@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Excluir_Livro(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(636, 331)
+        MainWindow.resize(636, 331)  # Usando a altura original do UI
         MainWindow.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -26,21 +26,8 @@ class Ui_Excluir_Livro(object):
         font.setWeight(75)
         self.label.setFont(font)
         self.label.setObjectName("label")
-        self.horizontalLayoutWidget_2 = QtWidgets.QWidget(self.centralwidget)
-        self.horizontalLayoutWidget_2.setGeometry(QtCore.QRect(40, 150, 541, 51))
-        self.horizontalLayoutWidget_2.setObjectName("horizontalLayoutWidget_2")
-        self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget_2)
-        self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        self.label_3 = QtWidgets.QLabel(self.horizontalLayoutWidget_2)
-        font = QtGui.QFont()
-        font.setPointSize(12)
-        self.label_3.setFont(font)
-        self.label_3.setObjectName("label_3")
-        self.horizontalLayout_2.addWidget(self.label_3)
-        self.lineEdit_autor_principal = QtWidgets.QLineEdit(self.horizontalLayoutWidget_2)
-        self.lineEdit_autor_principal.setObjectName("lineEdit_autor_principal")
-        self.horizontalLayout_2.addWidget(self.lineEdit_autor_principal)
+        
+        # Campo Autor Principal
         self.horizontalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
         self.horizontalLayoutWidget.setGeometry(QtCore.QRect(40, 100, 541, 51))
         self.horizontalLayoutWidget.setObjectName("horizontalLayoutWidget")
@@ -53,9 +40,30 @@ class Ui_Excluir_Livro(object):
         self.label_2.setFont(font)
         self.label_2.setObjectName("label_2")
         self.horizontalLayout.addWidget(self.label_2)
-        self.lineEdit_titulo_livro = QtWidgets.QLineEdit(self.horizontalLayoutWidget)
-        self.lineEdit_titulo_livro.setObjectName("lineEdit_titulo_livro")
-        self.horizontalLayout.addWidget(self.lineEdit_titulo_livro)
+        self.lineEdit_autor_principal = QtWidgets.QLineEdit(self.horizontalLayoutWidget)
+        self.lineEdit_autor_principal.setObjectName("lineEdit_autor_principal")
+        self.lineEdit_autor_principal.setPlaceholderText("Informe o nome do autor")
+        self.horizontalLayout.addWidget(self.lineEdit_autor_principal)
+        
+        # Campo ID
+        self.horizontalLayoutWidget_2 = QtWidgets.QWidget(self.centralwidget)
+        self.horizontalLayoutWidget_2.setGeometry(QtCore.QRect(40, 150, 541, 51))
+        self.horizontalLayoutWidget_2.setObjectName("horizontalLayoutWidget_2")
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget_2)
+        self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.label_3 = QtWidgets.QLabel(self.horizontalLayoutWidget_2)
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.label_3.setFont(font)
+        self.label_3.setObjectName("label_3")
+        self.horizontalLayout_2.addWidget(self.label_3)
+        self.lineEdit_id = QtWidgets.QLineEdit(self.horizontalLayoutWidget_2)
+        self.lineEdit_id.setObjectName("lineEdit_id")
+        self.lineEdit_id.setPlaceholderText("Informe o ID do livro")
+        self.horizontalLayout_2.addWidget(self.lineEdit_id)
+        
+        # Botões
         self.pushButton_voltar = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_voltar.setGeometry(QtCore.QRect(50, 210, 121, 41))
         font = QtGui.QFont()
@@ -66,6 +74,7 @@ class Ui_Excluir_Livro(object):
         self.pushButton_voltar.setStyleSheet(" border-radius: 8px;\n"
 "background-color: rgb(190, 190, 190);")
         self.pushButton_voltar.setObjectName("pushButton_voltar")
+        
         self.pushButton_add_livro = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_add_livro.setGeometry(QtCore.QRect(430, 210, 151, 51))
         font = QtGui.QFont()
@@ -79,6 +88,7 @@ class Ui_Excluir_Livro(object):
 "color: rgb(255, 255, 255);\n"
 " border-radius: 8px;")
         self.pushButton_add_livro.setObjectName("pushButton_add_livro")
+        
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 636, 26))
@@ -95,8 +105,8 @@ class Ui_Excluir_Livro(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.label.setText(_translate("MainWindow", "Excluir Livro"))
-        self.label_3.setText(_translate("MainWindow", "Autor principal:"))
-        self.label_2.setText(_translate("MainWindow", "Título do livro:"))
+        self.label_2.setText(_translate("MainWindow", "Autor principal:"))
+        self.label_3.setText(_translate("MainWindow", "ID:"))
         self.pushButton_voltar.setText(_translate("MainWindow", "Voltar"))
         self.pushButton_add_livro.setText(_translate("MainWindow", "Excluir"))
 

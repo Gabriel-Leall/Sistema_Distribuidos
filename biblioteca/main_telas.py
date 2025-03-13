@@ -321,18 +321,20 @@ class Main(Ui_Main, QMainWindow):
             self.mostrar_erro(f"Erro ao editar livro: {e}")
 
     def excluir_livro(self):
-        titulo = self.tela_excluir_livro.lineEdit_titulo_livro.text()
+        autor = self.tela_excluir_livro.lineEdit_autor_principal.text()
         id = self.tela_excluir_livro.lineEdit_id.text()
 
         if not id:
-            self.mostrar_erro('Faltou informar o ID.')
+            self.mostrar_erro('Faltou informar o ID do livro.')
             return
             
-        titulo = self.tela_excluir_livro.lineEdit_titulo_livro.text()
+        if not autor:
+            self.mostrar_erro('Faltou informar o autor do livro.')
+            return
         
-        # Confirmação de exclusão
+        # Confirmação de exclusão com os dados necessários
         confirmacao = QMessageBox.question(self, 'Confirmação', 
-                                         f"Tem certeza que deseja excluir o livro '{titulo}'?",
+                                         f"Tem certeza que deseja excluir o livro:\n\nAutor: '{autor}'\nID: {id}",
                                          QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         
         if confirmacao == QMessageBox.No:
@@ -341,12 +343,14 @@ class Main(Ui_Main, QMainWindow):
         try:
             # Usa a função de deletar livro importada do módulo firebase.livros
             deletar_livro(id)
-            QMessageBox.information(self, "Sucesso", f"Livro '{titulo}' excluído com sucesso!")
+            QMessageBox.information(self, "Sucesso", f"Livro do autor '{autor}' (ID: {id}) excluído com sucesso!")
             
             # Limpa os campos após excluir
-            self.tela_excluir_livro.lineEdit_titulo_livro.clear()
+            self.tela_excluir_livro.lineEdit_autor_principal.clear()
             self.tela_excluir_livro.lineEdit_id.clear()
             
+            # Atualiza a lista de livros após a exclusão
+            self.listar_livros_na_tela()
 
         except Exception as e:
             self.mostrar_erro(f"Erro ao excluir livro: {e}")

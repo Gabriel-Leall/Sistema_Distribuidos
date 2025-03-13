@@ -151,7 +151,7 @@ background-color: rgb(190, 190, 190);</string>
     <property name="geometry">
      <rect>
       <x>510</x>
-      <y>50</y>
+      <y>40</y>
       <width>101</width>
       <height>31</height>
      </rect>
@@ -178,7 +178,7 @@ color: rgb(255, 255, 255);
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>340</x>
+      <x>310</x>
       <y>0</y>
       <width>181</width>
       <height>31</height>
@@ -193,6 +193,34 @@ color: rgb(255, 255, 255);
      <string> Livros cadastrados</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="pushButton_listar_livro">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>240</y>
+      <width>151</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(85, 170, 255);
+color: rgb(255, 255, 255);
+ border-radius: 8px;</string>
+    </property>
+    <property name="text">
+     <string>Listar Livro</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -200,7 +228,7 @@ color: rgb(255, 255, 255);
      <x>0</x>
      <y>0</y>
      <width>637</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

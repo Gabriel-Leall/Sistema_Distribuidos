@@ -21,6 +21,24 @@ class Ui_Tela_Inicial(object):
         self.tableView = QtWidgets.QTableView(self.centralwidget)
         self.tableView.setGeometry(QtCore.QRect(230, 90, 381, 441))
         self.tableView.setObjectName("tableView")
+        
+        # Configurações básicas da tabela (que não dependem do modelo)
+        self.tableView.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        self.tableView.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.tableView.setAlternatingRowColors(True)
+        
+        # Estilo para o cabeçalho e linhas alternadas
+        self.tableView.horizontalHeader().setStyleSheet("QHeaderView::section { background-color: #E0E0E0; font-weight: bold; }")
+        self.tableView.setStyleSheet("QTableView { alternate-background-color: #F0F0F0; selection-background-color: #007BFF; }")
+        
+        # Ajustando tamanho e posição para melhor visualização
+        table_width = 381
+        table_height = 441
+        table_x = 200
+        table_y = 90
+        self.tableView.setGeometry(QtCore.QRect(table_x, table_y, table_width, table_height))
+        self.tableView.setMinimumWidth(380)
+        
         self.pushButton_add_livro = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_add_livro.setGeometry(QtCore.QRect(40, 60, 151, 51))
         font = QtGui.QFont()
@@ -88,6 +106,20 @@ class Ui_Tela_Inicial(object):
         font.setPointSize(12)
         self.label.setFont(font)
         self.label.setObjectName("label")
+        # Adicionando o botão de listar livros conforme definido no arquivo UI
+        self.pushButton_listar_livro = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_listar_livro.setGeometry(QtCore.QRect(40, 240, 151, 51))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        font.setBold(True)
+        font.setWeight(75)
+        self.pushButton_listar_livro.setFont(font)
+        self.pushButton_listar_livro.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.pushButton_listar_livro.setStyleSheet("background-color: rgb(85, 170, 255);\n"
+"color: rgb(255, 255, 255);\n"
+" border-radius: 8px;")
+        self.pushButton_listar_livro.setObjectName("pushButton_listar_livro")
+        
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 637, 26))
@@ -108,7 +140,43 @@ class Ui_Tela_Inicial(object):
         self.pushButton_excluir_livro.setText(_translate("MainWindow", "Excluir livro"))
         self.pushButton_voltar.setText(_translate("MainWindow", "Voltar"))
         self.pushButton_busca.setText(_translate("MainWindow", "Buscar"))
+        self.pushButton_listar_livro.setText(_translate("MainWindow", "Listar Livro"))
         self.label.setText(_translate("MainWindow", " Livros cadastrados"))
+        
+    def ajustar_tabela(self, MainWindow):
+        """Ajusta o tamanho da tabela quando a janela for redimensionada"""
+        # Verificando se a tabela tem um modelo válido
+        if self.tableView.model() is None:
+            return  # Se não tiver modelo, não faz nada
+            
+        # Verificando se o modelo tem colunas suficientes antes de configurar colunas específicas
+        try:
+            # Configurando o comportamento das colunas (só pode ser feito quando o modelo está definido)
+            self.tableView.horizontalHeader().setStretchLastSection(False)
+            self.tableView.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
+            
+            # Configurando estilos específicos para cada coluna
+            self.tableView.horizontalHeader().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)  # Título estica
+            self.tableView.horizontalHeader().setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)  # Autor estica
+            self.tableView.horizontalHeader().setSectionResizeMode(2, QtWidgets.QHeaderView.Fixed)    # Páginas fixo
+            self.tableView.horizontalHeader().setSectionResizeMode(3, QtWidgets.QHeaderView.Fixed)    # Ano fixo
+            self.tableView.horizontalHeader().setSectionResizeMode(4, QtWidgets.QHeaderView.Fixed)    # ID fixo
+            
+            # Definindo larguras para colunas de tamanho fixo
+            self.tableView.horizontalHeader().resizeSection(2, 70)  # Páginas
+            self.tableView.horizontalHeader().resizeSection(3, 70)  # Ano
+            self.tableView.horizontalHeader().resizeSection(4, 70)  # ID
+        except Exception as e:
+            print(f"Erro ao configurar colunas da tabela: {e}")
+        
+        # Calculando as dimensões ideais com base no tamanho atual da janela
+        table_width = self.centralwidget.width() - 210  # Mantém espaço para os botões à esquerda
+        table_height = self.centralwidget.height() - 120  # Mantém espaço para os elementos acima
+        table_x = 200  # Posição X da tabela
+        table_y = 90   # Posição Y da tabela
+        
+        # Aplicando a nova geometria à tabela
+        self.tableView.setGeometry(QtCore.QRect(table_x, table_y, table_width, table_height))
 
 
 if __name__ == "__main__":

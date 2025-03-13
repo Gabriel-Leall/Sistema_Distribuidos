@@ -27,7 +27,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="pushButton_add_livro">
     <property name="geometry">
      <rect>
       <x>40</x>
@@ -55,7 +55,7 @@ color: rgb(255, 255, 255);
      <string>Adicionar livro</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_2">
+   <widget class="QPushButton" name="pushButton_editar_livro">
     <property name="geometry">
      <rect>
       <x>40</x>
@@ -83,7 +83,7 @@ color: rgb(255, 255, 255);
      <string> Editar livro</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_3">
+   <widget class="QPushButton" name="pushButton_excluir_livro">
     <property name="geometry">
      <rect>
       <x>40</x>
@@ -111,7 +111,7 @@ color: rgb(255, 255, 255);
      <string>Excluir livro</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_4">
+   <widget class="QPushButton" name="pushButton_voltar">
     <property name="geometry">
      <rect>
       <x>50</x>
@@ -137,7 +137,7 @@ background-color: rgb(190, 190, 190);</string>
      <string>Voltar</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit">
+   <widget class="QLineEdit" name="lineEdit_pesquisar">
     <property name="geometry">
      <rect>
       <x>240</x>
@@ -147,7 +147,7 @@ background-color: rgb(190, 190, 190);</string>
      </rect>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_5">
+   <widget class="QPushButton" name="pushButton_busca">
     <property name="geometry">
      <rect>
       <x>510</x>

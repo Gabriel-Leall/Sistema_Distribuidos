@@ -66,7 +66,7 @@ class Main(Ui_Main, QMainWindow):
         # Configurações da tabela na tela inicial
         self.tela_inicial.tableView.setModel(self.modelo_tabela)
         
-        
+
         # Botões da tela de login
         self.tela_login.pushButton_criar_conta.clicked.connect(self.abrir_tela_criar_conta)
         self.tela_login.pushButton_entrar.clicked.connect(self.entrar_sistema)
@@ -89,6 +89,16 @@ class Main(Ui_Main, QMainWindow):
         self.tela_editar_livro.pushButton_voltar.clicked.connect(self.abrir_tela_inicial)
         self.tela_editar_livro.pushButton_add_livro.clicked.connect(self.editar_livro)
 
+    def limpar_valor(self, valor):
+        """Remove formatação de lista (colchetes e aspas) de valores"""
+        if isinstance(valor, list) and len(valor) > 0:
+            return valor[0]
+        valor_str = str(valor)
+        if valor_str.startswith('[') and valor_str.endswith(']'):
+            valor_str = valor_str[1:-1]  
+            valor_str = valor_str.replace("'", "").replace('"', '')  
+        return valor_str
+
     def mostrar_livro_na_tela(self, livro):
         try:
             layout = self.tela_inicial.scrollAreaWidgetContents.layout()
@@ -103,11 +113,11 @@ class Main(Ui_Main, QMainWindow):
                     if widget is not None:
                         widget.deleteLater()  
 
-            id = livro.get('id', 'Desconhecido')
-            titulo = livro.get('titulo', 'Desconhecido')
-            autor = livro.get('autor', 'Desconhecido')
-            paginas = livro.get('paginas', 'Desconhecido')
-            ano = livro.get('ano', 'Desconhecido')
+            id = self.limpar_valor(livro.get('id', 'Desconhecido'))
+            titulo = self.limpar_valor(livro.get('titulo', 'Desconhecido'))
+            autor = self.limpar_valor(livro.get('autor', 'Desconhecido'))
+            paginas = self.limpar_valor(livro.get('paginas', 'Desconhecido'))
+            ano = self.limpar_valor(livro.get('ano', 'Desconhecido'))
 
             label_titulo = QtWidgets.QLabel(f"Título: {titulo}")
             label_autor = QtWidgets.QLabel(f"Autor: {autor}")
@@ -159,7 +169,6 @@ class Main(Ui_Main, QMainWindow):
             print(f"Erro ao exibir livro na tela: {e}")
 
     def editar_livro(self, id_livro):
-       
         self.abrir_tela_editar_livro(id_livro)
 
         livro = self.buscar_livro_por_id(id_livro)
@@ -170,10 +179,10 @@ class Main(Ui_Main, QMainWindow):
         self.id_livro_atual = id_livro
 
         
-        titulo = str(livro.get('titulo', '')).strip("[]")
-        autor = str(livro.get('autor', '')).strip("[]")
-        paginas = str(livro.get('paginas', '')).strip("[]")
-        ano = str(livro.get('ano', '')).strip("[]")
+        titulo = self.limpar_valor(livro.get('titulo', ''))
+        autor = self.limpar_valor(livro.get('autor', ''))
+        paginas = self.limpar_valor(livro.get('paginas', ''))
+        ano = self.limpar_valor(livro.get('ano', ''))
 
         self.tela_editar_livro.lineEdit_titulo_livro.setText(titulo)
         self.tela_editar_livro.lineEdit_autor_principal.setText(autor)
@@ -186,7 +195,6 @@ class Main(Ui_Main, QMainWindow):
             pass  
 
         self.tela_editar_livro.pushButton_add_livro.clicked.connect(self.salvar_edicao_livro)
-
 
     def salvar_edicao_livro(self):
        
@@ -223,16 +231,18 @@ class Main(Ui_Main, QMainWindow):
 
         try:
             
-            atualizar_livro(self.id_livro_atual, titulo_final, autor_final.strip("[]"), paginas_final.strip("[]"), ano_final.strip("[]"))
+            atualizar_livro(
+                self.id_livro_atual, 
+                self.limpar_valor(titulo_final), 
+                self.limpar_valor(autor_final), 
+                self.limpar_valor(paginas_final), 
+                self.limpar_valor(ano_final),                
+            )
             QMessageBox.information(self, "Sucesso", f"Livro '{titulo_final}' atualizado com sucesso!")
 
             self.abrir_tela_inicial()
         except Exception as e:
             self.mostrar_erro(f"Erro ao editar livro: {e}")
-
-
-
-
 
     def abrir_tela_editar_livro(self, id_livro):
         self.QtStack.setCurrentIndex(4)  
@@ -350,9 +360,14 @@ class Main(Ui_Main, QMainWindow):
             print("Conta criada com sucesso!")
             QMessageBox.information(self, "Sucesso", "Conta criada com sucesso!")
             self.abrir_tela_login()
-        except:
-            print("Erro ao criar usuário")
-            QMessageBox.warning(self, "Erro", "Erro ao criar conta. Verifique os dados.")
+        except Exception as e:
+            # Verifica se o erro é de email já existente
+            error_message = str(e)
+            if "EMAIL_EXISTS" in error_message:
+                QMessageBox.warning(self, "Erro", "Este email já está cadastrado. Use outro email ou faça login.")
+            else:
+                print(f"Erro ao criar usuário: {e}")
+                QMessageBox.warning(self, "Erro", "Erro ao criar conta. Verifique os dados.")
 
     def adicionar_livro(self):
        
@@ -410,20 +425,19 @@ class Main(Ui_Main, QMainWindow):
             livros = list(listar_livros())  
 
             livros = livros[:30]
-
+            
             self.modelo_tabela.setRowCount(0)
-
+            
             self.modelo_tabela.setHorizontalHeaderLabels(["Título", "Autor", "Páginas", "Ano", "ID"])
-
+            
             for livro in livros:
                 livro_dict = livro.to_dict()
 
-                
-                titulo = str(livro_dict.get('titulo', ''))
-                autor = str(livro_dict.get('autor', ''))
-                paginas = str(livro_dict.get('paginas', ''))
-                ano = str(livro_dict.get('ano', ''))
-                id_livro = str(livro_dict.get('id', ''))
+                titulo = str(self.limpar_valor(livro_dict.get('titulo', '')))
+                autor = str(self.limpar_valor(livro_dict.get('autor', '')))
+                paginas = str(self.limpar_valor(livro_dict.get('paginas', '')))
+                ano = str(self.limpar_valor(livro_dict.get('ano', '')))
+                id_livro = str(self.limpar_valor(livro_dict.get('id', '')))
 
                 titulo_item = QStandardItem(titulo)
                 autor_item = QStandardItem(autor)
@@ -444,7 +458,7 @@ class Main(Ui_Main, QMainWindow):
         except Exception as e:
             print(f"Erro ao listar livros: {e}")
             self.mostrar_erro(f"Erro ao listar livros: {e}")
-
+        
 
     def abrir_tela_add_livro(self):
         self.QtStack.setCurrentIndex(3)
@@ -459,7 +473,7 @@ class Main(Ui_Main, QMainWindow):
         if not id:
             self.mostrar_erro('Faltou informar o ID do livro.')
             return
-      
+            
         confirmacao = QMessageBox.question(self, 'Confirmação', 
                                          f"Tem certeza que deseja excluir o livro:'\nID: {id}",
                                          QMessageBox.Yes | QMessageBox.No, QMessageBox.No)

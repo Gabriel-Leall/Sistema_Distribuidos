@@ -366,7 +366,6 @@ class Main(Ui_Main, QMainWindow):
     def buscar_livro(self):
         id_livro = self.tela_inicial.lineEdit_pesquisar.text().strip()
 
-        # Garante que a área de exibição de resultados tenha o estilo correto antes da busca
         self.tela_inicial.scrollArea.setStyleSheet(estilos.estilo_scroll_area_busca)
         self.tela_inicial.scrollAreaWidgetContents.setStyleSheet(estilos.estilo_scroll_content)
 
@@ -377,7 +376,6 @@ class Main(Ui_Main, QMainWindow):
         else:
             QMessageBox.warning(self, "Erro", "Livro não encontrado.")
             
-        # Garante que a área mantenha o estilo mesmo após a exibição do resultado
         self.tela_inicial.scrollAreaWidgetContents.setStyleSheet(estilos.estilo_scroll_content)
 
     def abrir_tela_login(self):
@@ -385,10 +383,8 @@ class Main(Ui_Main, QMainWindow):
         self.tela_login.lineEdit_email.clear()
         self.tela_login.lineEdit__senha.clear()
         
-        # Garante que a tela de login tenha o fundo preto
         self.stack0.setStyleSheet(estilos.estilo_tela_login)
         
-        # Reaplica os estilos aos campos de entrada
         self.tela_login.lineEdit_email.setStyleSheet(estilos.estilo_campo_login)
         self.tela_login.lineEdit__senha.setStyleSheet(estilos.estilo_campo_login)
 
@@ -449,7 +445,6 @@ class Main(Ui_Main, QMainWindow):
             QMessageBox.information(self, "Sucesso", "Conta criada com sucesso!")
             self.abrir_tela_login()
         except Exception as e:
-            # Verifica se o erro é de email já existente
             error_message = str(e)
             if "EMAIL_EXISTS" in error_message:
                 QMessageBox.warning(self, "Erro", "Este email já está cadastrado. Use outro email ou faça login.")

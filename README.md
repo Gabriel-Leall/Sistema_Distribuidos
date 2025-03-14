@@ -71,6 +71,7 @@ Esse é o ponto de entrada do sistema. Ele:
 
 ### 1️⃣ Instalar Python 3.11.6
 O Python 3.11.6 foi escolhido porque versões mais novas podem ter incompatibilidade com PyQt5.
+
 🔹 Baixe e instale o Python 3.11.6 em:
 [Download Python 3.11.6](https://www.python.org/downloads/release/python-3116/)
 

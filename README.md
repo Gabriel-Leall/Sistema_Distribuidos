@@ -205,7 +205,7 @@ Funções principais:
 - Permitir excluir livros existentes.
 - Redirecionar para a Tela de Editar Livro para editar um livro existente.
 
-<img src="https://github.com/user-attachments/assets/eac1181d-a9da-4609-a8e9-6344e04be0c2" width="300" />
+<img src="https://github.com/user-attachments/assets/eac1181d-a9da-4609-a8e9-6344e04be0c2" width="500" />
 
 ### Tela de Adicionar Livro
 
@@ -221,7 +221,7 @@ Funções principais:
 - Salvar o livro no Firebase Firestore.
 - Redirecionar para a Tela Inicial após o cadastro bem-sucedido.
 
-<img src="https://github.com/user-attachments/assets/92f9faea-5319-4d9e-9660-8ed5d5785bd6" width="300" />
+<img src="https://github.com/user-attachments/assets/92f9faea-5319-4d9e-9660-8ed5d5785bd6" width="400" />
 
 ### Tela de Editar Livro
 
@@ -238,7 +238,7 @@ Funções principais:
 - Atualizar o livro no Firebase Firestore.
 - Redirecionar para a Tela Inicial após as alterações serem salvas.
 
-<img src="https://github.com/user-attachments/assets/db63d202-f720-4bc6-a832-128e12c2267e" width="300" />
+<img src="https://github.com/user-attachments/assets/db63d202-f720-4bc6-a832-128e12c2267e" width="400" />
 
 ### 📧 Contato
 Se houver dúvidas, sugestões ou desejo de colaboração no projeto, sinta-se à vontade para entrar em contato com os colaboradores.

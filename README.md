@@ -163,8 +163,8 @@ A Tela de Login é onde o usuário realiza a autenticação para acessar o siste
 
 - Campos de entrada: Para o usuário inserir seu e-mail e senha.
 - Botão de login: O usuário clica para autenticar e entrar no sistema.
-= Botão de criação de conta: Caso o usuário ainda não tenha conta, ele pode clicar em "Criar Conta" para ser redirecionado para a tela de cadastro.
-- Botçao de sair: O sistema é encerrado.
+- Botão de criação de conta: Caso o usuário ainda não tenha conta, ele pode clicar em "Criar Conta" para ser redirecionado para a tela de cadastro.
+- Botão de sair: O sistema é encerrado.
 
 Funções principais:
 
@@ -178,7 +178,7 @@ Funções principais:
 A Tela de Criar Conta permite que o usuário se registre no sistema. Ela contém os seguintes componentes:
 
 - Campos de entrada: Para o usuário inserir seu e-mail, senha e confirmação da senha.
-= Botão de cadastro: Ao clicar, o usuário será registrado no Firebase, e sua conta será criada.
+- Botão de cadastro: Ao clicar, o usuário será registrado no Firebase, e sua conta será criada.
 - Botão de voltar: Para voltar à tela de login sem realizar o cadastro.
   
 Funções principais:
@@ -212,7 +212,7 @@ Funções principais:
 A Tela de Adicionar Livro permite que o usuário cadastre um novo livro. Ela contém os seguintes campos:
 
 - Campos de entrada: Para o usuário inserir informações do livro, como título, autor, ano de publicação, gênero, entre outros.
-= Botão de salvar: Cadastra o novo livro no sistema.
+- Botão de salvar: Cadastra o novo livro no sistema.
 - Botão de voltar: Permite voltar à tela inicial sem salvar o livro.
   
 Funções principais:

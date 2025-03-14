@@ -33,6 +33,7 @@ biblioteca/
 │   │   │-- editar_livro.ui
 │   │   │-- login.ui
 │   │   │-- tela_inicial.ui
+│── estilos.py
 │── main_telas.py
 ```
 
@@ -58,6 +59,9 @@ Os arquivos `.ui` são criados no Qt Designer e precisam ser convertidos para `.
 ```sh
 pyuic5 -x interface_grafica/ui/tela_inicial.ui -o interface_grafica/py/tela_inicial.py
 ```
+
+### 🎨 estilos.py
+Este arquivo é responsável por centralizar as configurações de estilo para as interfaces gráficas criadas com o PyQt5.
 
 ### 📄 main_telas.py (Arquivo principal)
 Esse é o ponto de entrada do sistema. Ele:
@@ -151,4 +155,88 @@ auth = firebase.auth()
 - Inicializa o Firebase com as configurações do firebaseConfig.
 - Obtém uma instância de auth, usada para autenticação de usuários.
 
+## 📱 Telas do Sistema
+
+### Tela de Login
+   
+A Tela de Login é onde o usuário realiza a autenticação para acessar o sistema. Ela possui os seguintes componentes:
+
+- Campos de entrada: Para o usuário inserir seu e-mail e senha.
+- Botão de login: O usuário clica para autenticar e entrar no sistema.
+= Botão de criação de conta: Caso o usuário ainda não tenha conta, ele pode clicar em "Criar Conta" para ser redirecionado para a tela de cadastro.
+- Botçao de sair: O sistema é encerrado.
+
+Funções principais:
+
+- Validar e autenticar o usuário no Firebase.
+- Redirecionar para a Tela Inicial ou mostrar uma mensagem de erro.
+
+![image](https://github.com/user-attachments/assets/f132c494-6f1d-4e7e-8fcf-8f0eb20cdbc4)
+
+### Tela de Criar Conta
+
+A Tela de Criar Conta permite que o usuário se registre no sistema. Ela contém os seguintes componentes:
+
+- Campos de entrada: Para o usuário inserir seu e-mail, senha e confirmação da senha.
+= Botão de cadastro: Ao clicar, o usuário será registrado no Firebase, e sua conta será criada.
+- Botão de voltar: Para voltar à tela de login sem realizar o cadastro.
+  
+Funções principais:
+
+- Criar uma nova conta de usuário no Firebase Authentication.
+Redirecionar para a Tela de Login caso o cadastro seja bem-sucedido.
+
+![image](https://github.com/user-attachments/assets/ee6f8132-7197-4e15-baf8-560d6c3f2333)
+![image](https://github.com/user-attachments/assets/b87e185b-4147-483c-8b96-463797585f7e)
+
+### Tela Inicial
+
+A Tela Inicial exibe a lista de livros cadastrados no sistema e contém as seguintes funcionalidades:
+
+- Lista de livros: Exibe todos os livros já cadastrados com suas informações (por exemplo, título, autor, etc.).
+- Campo de busca: Permite que o usuário pesquise um livro pelo ID. Se o livro for encontrado, ele aparecerá na lista com as opções de editar ou excluir.
+- Botão de adicionar livro: Leva o usuário para a Tela de Adicionar Livro, permitindo que ele registre um novo livro no sistema.
+
+Funções principais:
+
+- Listar todos os livros cadastrados no sistema.
+- Permitir buscar livros por ID.
+- Redirecionar para a Tela de Adicionar Livro para inserir um novo livro.
+- Permitir excluir livros existentes.
+- Redirecionar para a Tela de Editar Livro para editar um livro existente.
+
+![image](https://github.com/user-attachments/assets/eac1181d-a9da-4609-a8e9-6344e04be0c2)
+
+### Tela de Adicionar Livro
+
+A Tela de Adicionar Livro permite que o usuário cadastre um novo livro. Ela contém os seguintes campos:
+
+- Campos de entrada: Para o usuário inserir informações do livro, como título, autor, ano de publicação, gênero, entre outros.
+= Botão de salvar: Cadastra o novo livro no sistema.
+- Botão de voltar: Permite voltar à tela inicial sem salvar o livro.
+  
+Funções principais:
+
+- Coletar os dados do livro.
+- Salvar o livro no Firebase Firestore.
+- Redirecionar para a Tela Inicial após o cadastro bem-sucedido.
+
+![image](https://github.com/user-attachments/assets/92f9faea-5319-4d9e-9660-8ed5d5785bd6)
+
+### Tela de Editar Livro
+
+A Tela de Editar Livro permite que o usuário edite as informações de um livro já cadastrado. Ela possui:
+
+- Campos de entrada: Exibe as informações atuais do livro (título, autor, etc.), permitindo que o usuário edite esses dados.
+- Botão de salvar: Salva as alterações no Firebase Firestore.
+- Botão de cancelamento: Volta para a Tela Inicial sem salvar as modificações.
+  
+Funções principais:
+
+- Exibir as informações do livro a ser editado.
+- Permitir que o usuário altere os dados do livro.
+- Atualizar o livro no Firebase Firestore.
+- Redirecionar para a Tela Inicial após as alterações serem salvas.
+
+![image](https://github.com/user-attachments/assets/db63d202-f720-4bc6-a832-128e12c2267e)
 

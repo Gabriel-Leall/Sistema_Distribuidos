@@ -205,7 +205,7 @@ Funções principais:
 - Permitir excluir livros existentes.
 - Redirecionar para a Tela de Editar Livro para editar um livro existente.
 
-<img src="https://github.com/user-attachments/assets/eac1181d-a9da-4609-a8e9-6344e04be0c2" width="500" />
+<img src="https://github.com/user-attachments/assets/eac1181d-a9da-4609-a8e9-6344e04be0c2" width="600" />
 
 ### Tela de Adicionar Livro
 

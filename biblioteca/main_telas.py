@@ -21,6 +21,8 @@ from interface_grafica.py.add_livro import Ui_Add_Livro
 from interface_grafica.py.editar_livro import Ui_Editar_Livro
 
 from firebase import config_firebase
+# Importando o módulo de estilos
+import estilos
 
 class Ui_Main(QtWidgets.QWidget):
 
@@ -59,18 +61,17 @@ class Main(Ui_Main, QMainWindow):
         super(Main, self).__init__(parent)
         self.setupUi(self)
         
-        
         self.modelo_tabela = QStandardItemModel()
         self.modelo_tabela.setHorizontalHeaderLabels(["Título", "Autor", "Páginas", "Ano", "ID"])
         
-        # Configurações da tabela na tela inicial
         self.tela_inicial.tableView.setModel(self.modelo_tabela)
         
-        # NOVO: Configuração para desabilitar o botão de busca inicialmente
         self.tela_inicial.pushButton_busca.setEnabled(False)
         
-        # NOVO: Conectar evento de mudança de texto para verificar o campo de busca
         self.tela_inicial.lineEdit_pesquisar.textChanged.connect(self.verificar_campo_busca)
+        
+        # Aplicar estilos aos componentes da interface
+        self.aplicar_estilos_componentes()
 
         # Botões da tela de login
         self.tela_login.pushButton_criar_conta.clicked.connect(self.abrir_tela_criar_conta)
@@ -94,12 +95,77 @@ class Main(Ui_Main, QMainWindow):
         self.tela_editar_livro.pushButton_voltar.clicked.connect(self.abrir_tela_inicial)
         self.tela_editar_livro.pushButton_add_livro.clicked.connect(self.editar_livro)
 
+    def aplicar_estilos_componentes(self):
+        self.stack0.setStyleSheet(estilos.estilo_janela_principal)
+        self.stack1.setStyleSheet(estilos.estilo_janela_principal)
+        self.stack2.setStyleSheet(estilos.estilo_janela_principal)
+        self.stack3.setStyleSheet(estilos.estilo_janela_principal)
+        self.stack4.setStyleSheet(estilos.estilo_janela_principal)
+        
+        # Aplicando estilo preto sólido à tela de login
+        self.stack0.setStyleSheet(estilos.estilo_tela_login)
+        
+        # Estilo específico para a tela inicial - ajustando todos os elementos
+        self.stack2.setStyleSheet(estilos.estilo_tela_inicial)
+        
+        # Ajustando o conteúdo da scroll area
+        if self.tela_inicial.scrollAreaWidgetContents:
+            self.tela_inicial.scrollAreaWidgetContents.setStyleSheet(estilos.estilo_scroll_content)
+        
+        # Botões da tela de login e criar conta
+        self.tela_login.pushButton_entrar.setStyleSheet(estilos.estilo_botoes_login)
+        self.tela_login.pushButton_criar_conta.setStyleSheet(estilos.estilo_botoes_login)
+        self.tela_login.pushButton_voltar.setStyleSheet(estilos.estilo_botoes_voltar)
+        self.tela_criar_conta.pushButton_criar_conta.setStyleSheet(estilos.estilo_botoes_adicionar)
+        self.tela_criar_conta.pushButton.setStyleSheet(estilos.estilo_botoes_voltar)
+        
+        # Botões da tela inicial
+        self.tela_inicial.pushButton_add_livro.setStyleSheet(estilos.estilo_botoes_adicionar)
+        self.tela_inicial.pushButton_voltar.setStyleSheet(estilos.estilo_botoes_voltar)
+        self.tela_inicial.pushButton_busca.setStyleSheet(estilos.estilo_botoes_login)
+        
+        # Estilo da tabela
+        self.tela_inicial.tableView.setAlternatingRowColors(True)
+        self.tela_inicial.tableView.horizontalHeader().setStyleSheet(estilos.estilo_cabecalho_tabela)
+        self.tela_inicial.tableView.setStyleSheet(estilos.estilo_tabela)
+        self.tela_inicial.tableView.verticalScrollBar().setStyleSheet(estilos.estilo_scrollbar)
+        
+        # Botões das telas de adicionar e editar
+        self.tela_add_livro.pushButton_add_livro.setStyleSheet(estilos.estilo_botoes_adicionar)
+        self.tela_add_livro.pushButton_voltar.setStyleSheet(estilos.estilo_botoes_voltar)
+        self.tela_editar_livro.pushButton_add_livro.setStyleSheet(estilos.estilo_botoes_adicionar)
+        self.tela_editar_livro.pushButton_voltar.setStyleSheet(estilos.estilo_botoes_voltar)
+        
+        # Login - campos com bordas azuis
+        self.tela_login.lineEdit_email.setStyleSheet(estilos.estilo_campo_login)
+        self.tela_login.lineEdit__senha.setStyleSheet(estilos.estilo_campo_login)
+        
+        # Criar conta
+        self.tela_criar_conta.lineEdit_email.setStyleSheet(estilos.estilo_campo_texto)
+        self.tela_criar_conta.lineEdit_senha.setStyleSheet(estilos.estilo_campo_texto)
+        self.tela_criar_conta.lineEdit_conf_senha.setStyleSheet(estilos.estilo_campo_texto)
+        
+        # Busca
+        self.tela_inicial.lineEdit_pesquisar.setStyleSheet(estilos.estilo_campo_texto)
+        
+        # Campos de adicionar livro
+        self.tela_add_livro.lineEdit_titulo_livro.setStyleSheet(estilos.estilo_campo_texto)
+        self.tela_add_livro.lineEdit_autor_principal.setStyleSheet(estilos.estilo_campo_texto)
+        self.tela_add_livro.lineEdit_quantidade_paginas.setStyleSheet(estilos.estilo_campo_texto)
+        self.tela_add_livro.lineEdit_ano_publicacao.setStyleSheet(estilos.estilo_campo_texto)
+        self.tela_add_livro.lineEdit_id_livro.setStyleSheet(estilos.estilo_campo_texto)
+        
+        # Campos de editar livro
+        self.tela_editar_livro.lineEdit_titulo_livro.setStyleSheet(estilos.estilo_campo_texto)
+        self.tela_editar_livro.lineEdit_autor_principal.setStyleSheet(estilos.estilo_campo_texto)
+        self.tela_editar_livro.lineEdit_quantidade_paginas.setStyleSheet(estilos.estilo_campo_texto)
+        self.tela_editar_livro.lineEdit_ano_publicacao.setStyleSheet(estilos.estilo_campo_texto)
+
     def verificar_campo_busca(self):
         texto = self.tela_inicial.lineEdit_pesquisar.text().strip()
         self.tela_inicial.pushButton_busca.setEnabled(bool(texto) and texto.isdigit())
 
     def limpar_valor(self, valor):
-        """Remove formatação de lista (colchetes e aspas) de valores"""
         if isinstance(valor, list) and len(valor) > 0:
             return valor[0]
         valor_str = str(valor)
@@ -128,15 +194,19 @@ class Main(Ui_Main, QMainWindow):
             paginas = self.limpar_valor(livro.get('paginas', 'Desconhecido'))
             ano = self.limpar_valor(livro.get('ano', 'Desconhecido'))
 
+            frame_info = QtWidgets.QFrame()
+            frame_info.setStyleSheet(estilos.estilo_frame_info_livro)
+            frame_layout = QtWidgets.QVBoxLayout(frame_info)
+
             label_titulo = QtWidgets.QLabel(f"Título: {titulo}")
             label_autor = QtWidgets.QLabel(f"Autor: {autor}")
             label_paginas = QtWidgets.QLabel(f"Páginas: {paginas}")
             label_ano = QtWidgets.QLabel(f"Ano: {ano}")
 
-            label_titulo.setStyleSheet("font-size: 10pt; font-weight: bold;")
-            label_autor.setStyleSheet("font-size: 10pt; font-weight: bold;")
-            label_paginas.setStyleSheet("font-size: 10pt; font-weight: bold;")
-            label_ano.setStyleSheet("font-size: 10pt; font-weight: bold;")
+            label_titulo.setStyleSheet(estilos.estilo_label_info)
+            label_autor.setStyleSheet(estilos.estilo_label_info)
+            label_paginas.setStyleSheet(estilos.estilo_label_info)
+            label_ano.setStyleSheet(estilos.estilo_label_info)
 
             info_layout = QtWidgets.QHBoxLayout()
             info_layout.addWidget(label_titulo)
@@ -144,35 +214,25 @@ class Main(Ui_Main, QMainWindow):
             info_layout.addWidget(label_paginas)
             info_layout.addWidget(label_ano)
 
-            layout.addLayout(info_layout)
+            frame_layout.addLayout(info_layout)
 
-            buttons_layout = QtWidgets.QVBoxLayout()
+            buttons_layout = QtWidgets.QHBoxLayout()  
 
             button_editar = QtWidgets.QPushButton("Editar")
-            button_editar.setStyleSheet("""
-                background-color: rgb(85, 170, 255);
-                color: rgb(255, 255, 255);
-                border-radius: 8px;
-                padding: 10px;
-                font-size: 12pt;
-                font-weight: bold;
-            """)
+            button_editar.setStyleSheet(estilos.estilo_botoes_editar)
             button_editar.clicked.connect(lambda: self.editar_livro(livro.get('id')))
             buttons_layout.addWidget(button_editar)
 
             button_excluir = QtWidgets.QPushButton("Excluir")
-            button_excluir.setStyleSheet("""
-                background-color: rgb(255, 85, 85);
-                color: rgb(255, 255, 255);
-                border-radius: 8px;
-                padding: 10px;
-                font-size: 12pt;
-                font-weight: bold;
-            """)
+            button_excluir.setStyleSheet(estilos.estilo_botoes_excluir)
             button_excluir.clicked.connect(lambda: self.excluir_livro(livro.get('id')))
             buttons_layout.addWidget(button_excluir)
 
-            layout.addLayout(buttons_layout)
+            frame_layout.addLayout(buttons_layout)
+            layout.addWidget(frame_info)
+
+            # Garantindo que o scrollAreaWidgetContents tenha o estilo correto
+            self.tela_inicial.scrollAreaWidgetContents.setStyleSheet(estilos.estilo_scroll_content)
 
         except Exception as e:
             print(f"Erro ao exibir livro na tela: {e}")
@@ -258,6 +318,14 @@ class Main(Ui_Main, QMainWindow):
 
     def abrir_tela_inicial(self):
         self.QtStack.setCurrentIndex(2)  
+        
+        # Aplicando estilo para garantir que a tela tenha fundo preto
+        self.stack2.setStyleSheet(estilos.estilo_tela_inicial)
+        
+        # Garantindo que o scrollAreaWidgetContents também tenha o estilo correto
+        if self.tela_inicial.scrollAreaWidgetContents:
+            self.tela_inicial.scrollAreaWidgetContents.setStyleSheet(estilos.estilo_scroll_content)
+        
         self.tela_inicial.lineEdit_pesquisar.setText("")  
         self.tela_inicial.pushButton_busca.setEnabled(False)
 
@@ -274,6 +342,8 @@ class Main(Ui_Main, QMainWindow):
             novo_layout = QtWidgets.QVBoxLayout(scroll_area_widget)
             scroll_area_widget.setLayout(novo_layout)  
 
+            scroll_area_widget.setStyleSheet(estilos.estilo_scroll_content)
+            
             scroll_area_widget.update()
 
         except Exception as e:
@@ -298,18 +368,32 @@ class Main(Ui_Main, QMainWindow):
     def buscar_livro(self):
         id_livro = self.tela_inicial.lineEdit_pesquisar.text().strip()
 
+        # Garante que a área de exibição de resultados tenha o estilo correto antes da busca
+        self.tela_inicial.scrollArea.setStyleSheet(estilos.estilo_scroll_area_busca)
+        self.tela_inicial.scrollAreaWidgetContents.setStyleSheet(estilos.estilo_scroll_content)
+
         livro = self.buscar_livro_por_id(id_livro)
 
         if livro:
             self.mostrar_livro_na_tela(livro)  
         else:
             QMessageBox.warning(self, "Erro", "Livro não encontrado.")
+            
+        # Garante que a área mantenha o estilo mesmo após a exibição do resultado
+        self.tela_inicial.scrollAreaWidgetContents.setStyleSheet(estilos.estilo_scroll_content)
 
     def abrir_tela_login(self):
         self.QtStack.setCurrentIndex(0)
         self.tela_login.lineEdit_email.clear()
         self.tela_login.lineEdit__senha.clear()
-            
+        
+        # Garante que a tela de login tenha o fundo preto
+        self.stack0.setStyleSheet(estilos.estilo_tela_login)
+        
+        # Reaplica os estilos aos campos de entrada
+        self.tela_login.lineEdit_email.setStyleSheet(estilos.estilo_campo_login)
+        self.tela_login.lineEdit__senha.setStyleSheet(estilos.estilo_campo_login)
+
     def entrar_sistema(self):
     
         email = self.tela_login.lineEdit_email.text()

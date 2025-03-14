@@ -142,7 +142,7 @@ firebaseConfig = {
 - Este dicionário contém as configurações públicas do Firebase usadas pelo Pyrebase.
 - A chave databaseURL está vazia porque o Firestore é usado em vez do Realtime Database.
 
-### 🔹 **Inicialização do Pyrebase:**
+### **Inicialização do Pyrebase:**
 ```python
 firebase = pyrebase.initialize_app(firebaseConfig)
 auth = firebase.auth()

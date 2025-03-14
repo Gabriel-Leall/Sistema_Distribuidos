@@ -22,7 +22,7 @@ from interface_grafica.py.editar_livro import Ui_Editar_Livro
 
 from firebase import config_firebase
 # Importando o módulo de estilos
-import estilos
+from interface_grafica.estilos import estilos
 
 class Ui_Main(QtWidgets.QWidget):
 

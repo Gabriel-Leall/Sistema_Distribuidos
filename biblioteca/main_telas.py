@@ -317,10 +317,8 @@ class Main(Ui_Main, QMainWindow):
     def abrir_tela_inicial(self):
         self.QtStack.setCurrentIndex(2)  
         
-        # Aplicando estilo para garantir que a tela tenha fundo preto
         self.stack2.setStyleSheet(estilos.estilo_tela_inicial)
         
-        # Garantindo que o scrollAreaWidgetContents também tenha o estilo correto
         if self.tela_inicial.scrollAreaWidgetContents:
             self.tela_inicial.scrollAreaWidgetContents.setStyleSheet(estilos.estilo_scroll_content)
         
@@ -557,9 +555,7 @@ class Main(Ui_Main, QMainWindow):
             self.mostrar_erro('Faltou informar o ID do livro.')
             return
             
-        confirmacao = QMessageBox.question(self, 'Confirmação', 
-                                         f"Tem certeza que deseja excluir o livro:'\nID: {id}",
-                                         QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        confirmacao = QMessageBox.question(self, 'Confirmação', f"Tem certeza que deseja excluir o livro:'\nID: {id}", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         
         if confirmacao == QMessageBox.No:
             return

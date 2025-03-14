@@ -1,6 +1,6 @@
 # Sistema de Cadastro de Livros
 
-## Descrição
+## 📖 Descrição
 Este projeto é um sistema de cadastro de livros para bibliotecas, permitindo a realização de operações de CRUD (Create, Read, Update e Delete). Essas operações correspondem, respectivamente, à criação, consulta, atualização e remoção de registros no banco de dados.
 
 No sistema, são armazenadas as seguintes informações sobre os livros:
@@ -9,12 +9,12 @@ No sistema, são armazenadas as seguintes informações sobre os livros:
 - **Número de páginas**
 - **Ano de publicação**
 
-## Tecnologias Utilizadas
+## ⚙️ Tecnologias Utilizadas
 - **Python** – Linguagem de programação principal
 - **PyQt5** – Para criação da interface gráfica
 - **Firebase** – Para autenticação e armazenamento dos livros
 
-## Estrutura do Projeto
+## 🗂️ Estrutura do Projeto
 ```
 biblioteca/
 │── firebase/

@@ -171,7 +171,7 @@ Funções principais:
 - Validar e autenticar o usuário no Firebase.
 - Redirecionar para a Tela Inicial ou mostrar uma mensagem de erro.
 
-![image](https://github.com/user-attachments/assets/f132c494-6f1d-4e7e-8fcf-8f0eb20cdbc4)
+<img src="https://github.com/user-attachments/assets/f132c494-6f1d-4e7e-8fcf-8f0eb20cdbc4" width="300" />
 
 ### Tela de Criar Conta
 
@@ -186,8 +186,8 @@ Funções principais:
 - Criar uma nova conta de usuário no Firebase Authentication.
 Redirecionar para a Tela de Login caso o cadastro seja bem-sucedido.
 
-![image](https://github.com/user-attachments/assets/ee6f8132-7197-4e15-baf8-560d6c3f2333)
-![image](https://github.com/user-attachments/assets/b87e185b-4147-483c-8b96-463797585f7e)
+<img src="https://github.com/user-attachments/assets/ee6f8132-7197-4e15-baf8-560d6c3f2333" width="300" />
+<img src="https://github.com/user-attachments/assets/b87e185b-4147-483c-8b96-463797585f7e" width="300" />
 
 ### Tela Inicial
 
@@ -205,7 +205,7 @@ Funções principais:
 - Permitir excluir livros existentes.
 - Redirecionar para a Tela de Editar Livro para editar um livro existente.
 
-![image](https://github.com/user-attachments/assets/eac1181d-a9da-4609-a8e9-6344e04be0c2)
+<img src="https://github.com/user-attachments/assets/eac1181d-a9da-4609-a8e9-6344e04be0c2" width="300" />
 
 ### Tela de Adicionar Livro
 
@@ -221,7 +221,7 @@ Funções principais:
 - Salvar o livro no Firebase Firestore.
 - Redirecionar para a Tela Inicial após o cadastro bem-sucedido.
 
-![image](https://github.com/user-attachments/assets/92f9faea-5319-4d9e-9660-8ed5d5785bd6)
+<img src="https://github.com/user-attachments/assets/92f9faea-5319-4d9e-9660-8ed5d5785bd6" width="300" />
 
 ### Tela de Editar Livro
 
@@ -238,7 +238,7 @@ Funções principais:
 - Atualizar o livro no Firebase Firestore.
 - Redirecionar para a Tela Inicial após as alterações serem salvas.
 
-![image](https://github.com/user-attachments/assets/db63d202-f720-4bc6-a832-128e12c2267e)
+<img src="https://github.com/user-attachments/assets/db63d202-f720-4bc6-a832-128e12c2267e" width="300" />
 
 ### 📧 Contato
 Se houver dúvidas, sugestões ou desejo de colaboração no projeto, sinta-se à vontade para entrar em contato com os colaboradores.

@@ -62,7 +62,6 @@ pyuic5 -x interface_grafica/ui/tela_inicial.ui -o interface_grafica/py/tela_inic
 ### 📄 main_telas.py (Arquivo principal)
 Esse é o ponto de entrada do sistema. Ele:
 - Inicializa o PyQt5.
-- Carrega a tela de login ou tela inicial.
 - Gerencia a navegação entre as telas.
 
 ---
@@ -70,7 +69,8 @@ Esse é o ponto de entrada do sistema. Ele:
 ## 📌 Guia de Instalação e Uso
 
 ### 1️⃣ Instalar Python 3.11.6
-O Python 3.11.6 foi escolhido porque versões mais novas podem ter incompatibilidade com PyQt5.
+O Python 3.11.6 foi escolhido porque versões mais novas do Python (como 3.13) podem ter incompatibilidade com PyQt5, devido a mudanças internas na API do Python. Algumas versões mais antigas do PyQt5 podem não funcionar corretamente no Python 3.13, exigindo um downgrade para Python 3.11.6.
+
 
 🔹 Baixe e instale o Python 3.11.6 em:
 [Download Python 3.11.6](https://www.python.org/downloads/release/python-3116/)

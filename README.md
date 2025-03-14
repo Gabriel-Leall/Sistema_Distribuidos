@@ -241,7 +241,7 @@ Funções principais:
 ![image](https://github.com/user-attachments/assets/db63d202-f720-4bc6-a832-128e12c2267e)
 
 ### 📧 Contato
-Se houver dúvidas, sugestões ou desejo de colaboração no projeto, sinta-se à vontade para entrar em contato com o colaborador.
+Se houver dúvidas, sugestões ou desejo de colaboração no projeto, sinta-se à vontade para entrar em contato com os colaboradores.
 
 erlanny.rego@ufpi.edu.br
 gabrielleal7153@gmail.com

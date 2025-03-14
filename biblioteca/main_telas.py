@@ -66,6 +66,11 @@ class Main(Ui_Main, QMainWindow):
         # Configurações da tabela na tela inicial
         self.tela_inicial.tableView.setModel(self.modelo_tabela)
         
+        # NOVO: Configuração para desabilitar o botão de busca inicialmente
+        self.tela_inicial.pushButton_busca.setEnabled(False)
+        
+        # NOVO: Conectar evento de mudança de texto para verificar o campo de busca
+        self.tela_inicial.lineEdit_pesquisar.textChanged.connect(self.verificar_campo_busca)
 
         # Botões da tela de login
         self.tela_login.pushButton_criar_conta.clicked.connect(self.abrir_tela_criar_conta)
@@ -88,6 +93,10 @@ class Main(Ui_Main, QMainWindow):
         # Botões da tela editar livro
         self.tela_editar_livro.pushButton_voltar.clicked.connect(self.abrir_tela_inicial)
         self.tela_editar_livro.pushButton_add_livro.clicked.connect(self.editar_livro)
+
+    def verificar_campo_busca(self):
+        texto = self.tela_inicial.lineEdit_pesquisar.text().strip()
+        self.tela_inicial.pushButton_busca.setEnabled(bool(texto) and texto.isdigit())
 
     def limpar_valor(self, valor):
         """Remove formatação de lista (colchetes e aspas) de valores"""
@@ -250,6 +259,7 @@ class Main(Ui_Main, QMainWindow):
     def abrir_tela_inicial(self):
         self.QtStack.setCurrentIndex(2)  
         self.tela_inicial.lineEdit_pesquisar.setText("")  
+        self.tela_inicial.pushButton_busca.setEnabled(False)
 
         self.limpar_scroll_area()
         self.listar_livros_na_tela()
@@ -287,10 +297,6 @@ class Main(Ui_Main, QMainWindow):
 
     def buscar_livro(self):
         id_livro = self.tela_inicial.lineEdit_pesquisar.text().strip()
-
-        if not id_livro:
-            QMessageBox.warning(self, "Erro", "Digite um ID válido.")
-            return
 
         livro = self.buscar_livro_por_id(id_livro)
 

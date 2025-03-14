@@ -147,7 +147,7 @@ class Ui_Editar_Livro(object):
         self.label_3.setText(_translate("MainWindow", "Autor principal:"))
         self.label_4.setText(_translate("MainWindow", "Quantidade de páginas:"))
         self.pushButton_voltar.setText(_translate("MainWindow", "Voltar"))
-        self.pushButton_add_livro.setText(_translate("MainWindow", " Editar livro"))
+        self.pushButton_add_livro.setText(_translate("MainWindow", " Salvar"))
 
 
 if __name__ == "__main__":

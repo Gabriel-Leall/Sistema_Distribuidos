@@ -165,7 +165,7 @@ class Ui_Add_Livro(object):
         self.label_5.setText(_translate("MainWindow", "Ano de publicação:"))
         self.label_6.setText(_translate("MainWindow", "ID do livro:"))
         self.pushButton_voltar.setText(_translate("MainWindow", "Voltar"))
-        self.pushButton_add_livro.setText(_translate("MainWindow", "Adicionar livro"))
+        self.pushButton_add_livro.setText(_translate("MainWindow", "Salvar"))
 
 
 if __name__ == "__main__":

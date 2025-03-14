@@ -1,17 +1,15 @@
 import sys
 import pyrebase
 import re
-from firebase.livros import criar_livro, listar_livros, verificar_livro, atualizar_livro, deletar_livro
+from firebase.livros import criar_livro, listar_livros, atualizar_livro, deletar_livro
 from datetime import datetime
 
 from PyQt5 import QtWidgets, QtCore, QtGui
-from PyQt5.QtWidgets import QMessageBox, QMainWindow, QApplication, QTableView, QTableWidgetItem
-from PyQt5.QtGui import QDesktopServices, QStandardItemModel, QStandardItem
-from PyQt5.QtCore import Qt, QUrl, QDate
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QApplication, QLabel, QVBoxLayout, QWidget, QTableWidget
-from PyQt5.QtCore import QByteArray
-from PyQt5.QtWidgets import QPushButton
+from PyQt5.QtWidgets import QMessageBox, QMainWindow, QApplication
+from PyQt5.QtGui import QStandardItemModel, QStandardItem
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QApplication
+
 
 from interface_grafica.py.login import Ui_Login
 from interface_grafica.py.criar_conta import Ui_Criar_Conta
@@ -19,10 +17,10 @@ from interface_grafica.py.tela_inicial import Ui_Tela_Inicial
 from interface_grafica.py.tela_inicial import Ui_Tela_Inicial
 from interface_grafica.py.add_livro import Ui_Add_Livro
 from interface_grafica.py.editar_livro import Ui_Editar_Livro
+import interface_grafica.estilos as estilos
 
 from firebase import config_firebase
-# Importando o módulo de estilos
-from interface_grafica.estilos import estilos
+
 
 class Ui_Main(QtWidgets.QWidget):
 

@@ -24,6 +24,13 @@ class ImageUploader:
         self.modified_image_label = tk.Label(root)
         self.modified_image_label.pack()
 
+        self.filter_label = tk.Label(root, text="Escolha um filtro:")
+        self.filter_label.pack()
+        self.filter_var = tk.StringVar(root)
+        self.filter_var.set("grayscale")  # Filtro padrão
+        self.filter_menu = tk.OptionMenu(root, self.filter_var, "grayscale", "invert", "mirror")
+        self.filter_menu.pack()
+
     def upload_image(self):
         file_path = filedialog.askopenfilename(filetypes=[("Image files", "*.jpg;*.jpeg;*.png")])
         if not file_path:
@@ -32,7 +39,7 @@ class ImageUploader:
         print(f"Enviando imagem: {file_path}")
 
         with open(file_path, 'rb') as img_file:
-            response = requests.post('http://localhost:5000/upload', files={'image': img_file})
+            response = requests.post('http://localhost:5000/upload', files={'image': img_file}, data={'filtro': self.filter_var.get()})
 
         print(f"Status da resposta: {response.status_code}")
         print(f"Conteúdo da resposta: {response.text}")

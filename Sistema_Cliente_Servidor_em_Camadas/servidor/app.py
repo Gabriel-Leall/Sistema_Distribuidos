@@ -27,30 +27,52 @@ def init_db():
         ''')
         conn.commit()
 
-@app.route('/upload', methods=['POST'])
+@app.route("/upload", methods=["POST"])
 def upload():
-    if 'image' not in request.files:
-        return jsonify({'erro': 'Nenhuma imagem enviada'}), 400
+    print("Recebendo a requisição...")
+    if "image" not in request.files:
+        print("Nenhuma imagem enviada.")
+        return jsonify({"erro": "Nenhuma imagem enviada"}), 400
 
-    arquivo = request.files['image']
-    if arquivo.filename == '':
-        return jsonify({'erro': 'Nome do arquivo vazio'}), 400
+    arquivo = request.files["image"]
+    filtro = request.form.get("filtro", "grayscale")  # Pega o filtro enviado
 
+    if arquivo.filename == "":
+        print("Nome do arquivo vazio.")
+        return jsonify({"erro": "Nome do arquivo vazio"}), 400
+
+    # Salva a imagem original
     caminho_original = os.path.join(UPLOAD_FOLDER, arquivo.filename)
     arquivo.save(caminho_original)
 
-    caminho_modificado = aplicar_filtro(caminho_original)
+    # Aplica o filtro e salva a imagem processada
+    caminho_modificado = aplicar_filtro(caminho_original, filtro)
 
     if not caminho_modificado:
+        print("Erro ao processar a imagem.")
         return jsonify({"erro": "Erro ao processar a imagem"}), 500
 
-    return send_file(caminho_modificado, mimetype="image/png")
+    return jsonify({
+        'original_url': caminho_original,
+        'modified_url': caminho_modificado
+    })
 
-def aplicar_filtro(caminho_imagem):
+def aplicar_filtro(caminho_imagem, filtro):
     try:
         imagem = Image.open(caminho_imagem)
-        imagem = imagem.convert("L")  # Exemplo de filtro: converter para grayscale
-        caminho_modificado = os.path.join(PROCESSED_FOLDER, 'mod_imagem.jpg')
+
+        if filtro == "invert":
+            imagem = Image.open(caminho_imagem).convert("RGB").transpose(Image.FLIP_LEFT_RIGHT).transpose(Image.FLIP_TOP_BOTTOM)
+        elif filtro == "grayscale":
+            imagem = Image.open(caminho_imagem).convert("L")
+        elif filtro == "mirror":
+            imagem = Image.open(caminho_imagem).transpose(Image.FLIP_LEFT_RIGHT)
+        else:
+            print("Filtro não reconhecido.")
+            return None
+
+        nome_arquivo = os.path.basename(caminho_imagem)
+        caminho_modificado = os.path.join(PROCESSED_FOLDER, f'mod_{nome_arquivo}')
         imagem.save(caminho_modificado)
         return caminho_modificado
     except Exception as e:

@@ -67,7 +67,7 @@ app.py → Código principal do servidor Flask.
 📂 images/
 Pode ser usada para armazenar imagens de exemplo ou temporárias.
 
-# 📌 Guia de Instalação e Uso
+## 📌 Guia de Instalação e Uso
 
 ### 1️⃣ Instalar Dependências
 
@@ -121,7 +121,9 @@ python GUI.py
 ### 5️⃣  4. Testar o Sistema
 
 Na interface do cliente (Tkinter):
-    - Escolha uma imagem para enviar.
-    - Selecione um filtro (grayscale, invert, mirror).
-    - Clique no botão "Enviar Imagem".
+
+- Escolha uma imagem para enviar.
+- Selecione um filtro (grayscale, invert, mirror).
+- Clique no botão "Enviar Imagem".
+
 A imagem original e a modificada devem aparecer na tela.

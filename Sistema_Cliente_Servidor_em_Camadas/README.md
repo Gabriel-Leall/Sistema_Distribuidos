@@ -118,7 +118,7 @@ Rodar a interface gráfica
 python GUI.py
 ```
 
-### 5️⃣  4. Testar o Sistema
+### 5️⃣ Testar o Sistema
 
 Na interface do cliente (Tkinter):
 

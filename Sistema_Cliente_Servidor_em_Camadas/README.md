@@ -63,4 +63,65 @@ app.py → Código principal do servidor Flask.
   - Aplica filtros e armazena o resultado em processed/.
   - Retorna ao cliente os caminhos das imagens para exibição.
 
+### 📂 Imagens
+📂 images/
+Pode ser usada para armazenar imagens de exemplo ou temporárias.
 
+# 📌 Guia de Instalação e Uso
+
+### 1️⃣ Instalar Dependências
+
+No terminal, rode:
+
+```
+pip install flask requests pillow
+```
+
+O tkinter e sqlite3 já vêm por padrão com o Python.
+
+### 2️⃣ Clonar o Repositório
+
+```sh
+git clone git@github.com:Gabriel-Leall/Sistema_Distribuidos.git
+cd Sistema_Cliente_Servidor_em_Camadas
+```
+
+### 3️⃣ Iniciar o Servidor
+
+📍 Passos para rodar o servidor Flask
+
+Acesse o diretório do servidor
+```sh
+cd server
+```
+Rodar o servidor
+
+```sh
+python app.py
+```
+Se tudo estiver certo, o terminal mostrará algo assim:
+
+```sh
+Running on http://127.0.0.1:5000/
+```
+Isso significa que o servidor está pronto para receber imagens do cliente.
+
+### 4️⃣ Rodar o Cliente
+
+📍 Passos para rodar o cliente Tkinter
+Abrir outro terminal e acessar o diretório do cliente:
+```sh
+cd client
+```
+Rodar a interface gráfica
+```sh
+python GUI.py
+```
+
+### 5️⃣  4. Testar o Sistema
+
+Na interface do cliente (Tkinter):
+    - Escolha uma imagem para enviar.
+    - Selecione um filtro (grayscale, invert, mirror).
+    - Clique no botão "Enviar Imagem".
+A imagem original e a modificada devem aparecer na tela.

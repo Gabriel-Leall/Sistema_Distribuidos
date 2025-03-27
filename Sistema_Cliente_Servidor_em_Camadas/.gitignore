@@ -1,2 +1,5 @@
 server/processed/*
 server/uploads/*
+
+!server/processed/.gitkeep
+!server/uploads/.gitkeep

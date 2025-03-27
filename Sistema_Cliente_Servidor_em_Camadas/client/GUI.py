@@ -92,6 +92,7 @@ class ImageUploader:
             print("Erro no servidor:", response.text)
             messagebox.showerror("Erro", "Falha ao enviar a imagem.")
             
+
     def show_images(self, original_url, modified_url):
         base_url = "http://localhost:5000"  
 
@@ -114,6 +115,7 @@ class ImageUploader:
             modified_photo = ImageTk.PhotoImage(modified_image)
             self.modified_image_label.config(image=modified_photo)
             self.modified_image_label.image = modified_photo
+
 
 if __name__ == "__main__":
     root = tk.Tk()

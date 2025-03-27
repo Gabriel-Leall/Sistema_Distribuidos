@@ -126,4 +126,7 @@ Na interface do cliente (Tkinter):
 - Selecione um filtro (grayscale, invert, mirror).
 - Clique no botão "Enviar Imagem".
 
-A imagem original e a modificada devem aparecer na tela.
+A imagem original e a modificada devem aparecer na tela, como mostra a imagem abaixo.
+
+![image](https://github.com/user-attachments/assets/e9ecacdf-174f-4537-87eb-f8bddc2e5576)
+

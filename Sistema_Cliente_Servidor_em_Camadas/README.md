@@ -26,8 +26,41 @@ Sistema_Cliente_Servidor_em_Camadas/
 |-- client/
 |    |-- GUI.py
 |-- server/
+|    |-- database/
+|        |-- init_db.sql
+|        |-- metadados.db
 |    |-- processed/
 |    |-- uploads/
 |    |-- app.py
 |-- images/
 ```
+
+### 🖥️ Client (Cliente)
+
+📂 client/
+Contém o código do cliente que envia imagens ao servidor e exibe os resultados processados.
+
+- GUI.py → Interface gráfica desenvolvida com Tkinter.
+    Permite que o usuário envie imagens.
+    Escolhe um filtro.
+    Recebe e exibe a imagem processada.
+
+### 🌐 Server (Servidor)
+📂 server/
+Contém o código do servidor Flask, que recebe imagens do cliente, processa, armazena e retorna as imagens modificadas.
+
+📂 database/ → Armazena o banco de dados do projeto.
+  - init_db.sql → Script SQL para criar a estrutura inicial do banco.
+  - metadados.db → Banco SQLite contendo informações sobre as imagens enviadas e processadas.
+
+📂 processed/ → Diretório onde o servidor salva as imagens já processadas (modificadas).
+
+📂 uploads/ → Diretório onde as imagens originais enviadas pelo cliente são armazenadas antes do processamento.
+
+app.py → Código principal do servidor Flask.
+- Recebe requisições do cliente (envio de imagens).
+  - Salva as imagens em uploads/.
+  - Aplica filtros e armazena o resultado em processed/.
+  - Retorna ao cliente os caminhos das imagens para exibição.
+
+

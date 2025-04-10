@@ -20,12 +20,12 @@ O sistema funciona da seguinte forma:
 
 ```
 cliente-servidor-threads/
-|-- ClienteGUI.java
-|-- docker-compose.yml
-|-- Dockerfile.mestre
-|-- Dockerfile.escravo1
-|-- Dockerfile.escravo2
-|-- servidores/
+|-- ClienteGUI.java         # Interface gráfica do cliente
+|-- docker-compose.yml      # Configuração do Docker Compose
+|-- Dockerfile.mestre       # Configuração do servidor mestre
+|-- Dockerfile.escravo1     # Configuração do servidor escravo 1
+|-- Dockerfile.escravo2     # Configuração do servidor escravo 2
+|-- servidores/             # Código dos servidores
 |    |-- ServidorMestre.java
 |    |-- Escravo1.java
 |    |-- Escravo2.java
@@ -109,6 +109,8 @@ java ClienteGUI
 
 A interface gráfica será exibida, permitindo que você envie textos para o servidor.
 
+![Imagem do WhatsApp de 2025-04-10 à(s) 22 32 18_d699187a](https://github.com/user-attachments/assets/16723068-12da-4a27-844b-d6f80f7680dc)
+
 ### 4️⃣ Testar o Sistema
 
 Na interface do cliente:
@@ -123,21 +125,6 @@ Para parar os contêineres, use:
 
 ```sh
 docker-compose down
-```
-
-## 📂 Estrutura de Diretórios
-
-```
-cliente-servidor-threads/
-|-- ClienteGUI.java         # Interface gráfica do cliente
-|-- docker-compose.yml      # Configuração do Docker Compose
-|-- Dockerfile.mestre       # Configuração do servidor mestre
-|-- Dockerfile.escravo1     # Configuração do servidor escravo 1
-|-- Dockerfile.escravo2     # Configuração do servidor escravo 2
-|-- servidores/             # Código dos servidores
-|    |-- ServidorMestre.java
-|    |-- Escravo1.java
-|    |-- Escravo2.java
 ```
 
 ## 🛠️ Tecnologias Utilizadas

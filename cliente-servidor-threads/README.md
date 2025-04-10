@@ -109,7 +109,9 @@ java ClienteGUI
 
 A interface gráfica será exibida, permitindo que você envie textos para o servidor.
 
-![Imagem do WhatsApp de 2025-04-10 à(s) 22 32 18_d699187a](https://github.com/user-attachments/assets/16723068-12da-4a27-844b-d6f80f7680dc)
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/16723068-12da-4a27-844b-d6f80f7680dc" width="400"/>
+</p>
 
 ### 4️⃣ Testar o Sistema
 

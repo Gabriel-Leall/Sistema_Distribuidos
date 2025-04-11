@@ -107,7 +107,7 @@ javac ClienteGUI.java
 java ClienteGUI
 ```
 
-A interface gráfica será exibida, permitindo que você envie textos para o servidor.
+A interface gráfica será exibida, permitindo que você envie textos para o servidor. A imagem à esquerda mostra o sistema funcionando corretamente. Já à direita, é exibido o cenário em que o Escravo 1 está fora de serviço.
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/16723068-12da-4a27-844b-d6f80f7680dc" width="400"/>

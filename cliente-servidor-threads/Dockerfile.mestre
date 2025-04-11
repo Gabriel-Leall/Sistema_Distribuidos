@@ -1,0 +1,11 @@
+FROM openjdk:21
+
+WORKDIR /app
+
+COPY . /app
+
+RUN javac servidores/*.java
+
+EXPOSE 8000
+
+CMD ["java", "servidores.ServidorMestre"]

@@ -1,4 +1,4 @@
-package ProjetoDistribuido;
+package servidores;
 
 import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.HttpExchange;
@@ -9,42 +9,57 @@ import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.Executors;
 
-public class Escravo1 {
+public class Escravo2 {
 
     public static void main(String[] args) throws Exception {
-        HttpServer server = HttpServer.create(new InetSocketAddress(8001), 0);
-        server.createContext("/letras", new LetrasHandler());
+        System.out.println("Iniciando servidor Escravo 2...");
+
+        HttpServer server = HttpServer.create(new InetSocketAddress(8002), 0);
+        server.createContext("/numeros", new NumerosHandler());
         server.createContext("/status", new StatusHandler());
         server.setExecutor(Executors.newCachedThreadPool());
-        System.out.println("Escravo 1 rodando na porta 8001");
+
+        System.out.println("Escravo 2 rodando na porta 8002");
         server.start();
     }
 
-    static class LetrasHandler implements HttpHandler {
+    static class NumerosHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
+            System.out.println("Requisição recebida em /numeros");
+
             if (!"POST".equals(exchange.getRequestMethod())) {
+                System.out.println("Método não permitido: " + exchange.getRequestMethod());
                 exchange.sendResponseHeaders(405, -1);
                 return;
             }
 
+            System.out.println("Lendo texto enviado...");
             String texto = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
-            long count = texto.chars().filter(Character::isLetter).count();
+            System.out.println("Texto recebido: " + texto);
 
-            String resposta = "Letras: " + count;
+            long count = texto.chars().filter(Character::isDigit).count();
+            System.out.println("Quantidade de números contados: " + count);
+
+            String resposta = "Números: " + count;
             exchange.sendResponseHeaders(200, resposta.getBytes().length);
             exchange.getResponseBody().write(resposta.getBytes());
             exchange.getResponseBody().close();
+            System.out.println("Resposta enviada ao mestre: " + resposta);
         }
     }
 
     static class StatusHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
+            System.out.println("Requisição de status recebida em /status");
+
             String resposta = "OK";
             exchange.sendResponseHeaders(200, resposta.getBytes().length);
             exchange.getResponseBody().write(resposta.getBytes());
             exchange.getResponseBody().close();
+
+            System.out.println("Status 'OK' enviado");
         }
     }
 }

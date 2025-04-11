@@ -1,5 +1,3 @@
-package ProjetoDistribuido;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -20,17 +18,16 @@ public class ClienteGUI extends JFrame {
         setTitle("Cliente - Sistema Distribuído");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(500, 400);
-        setLocationRelativeTo(null); // centraliza
+        setLocationRelativeTo(null); 
 
         inputArea = new JTextArea(5, 40);
         outputArea = new JTextArea(10, 40);
         outputArea.setEditable(false);
 
         enviarBtn = new JButton("Enviar");
-        enviarBtn.setPreferredSize(new Dimension(100, 30)); // botão menor
+        enviarBtn.setPreferredSize(new Dimension(100, 30)); 
         enviarBtn.addActionListener(this::enviarTexto);
 
-        // Layout principal
         JPanel painel = new JPanel();
         painel.setLayout(new BorderLayout(10, 10));
 
@@ -57,16 +54,16 @@ public class ClienteGUI extends JFrame {
         String texto = inputArea.getText().trim();
         if (texto.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Digite um texto antes de enviar.");
+            System.out.println("Nenhum texto para enviar.");
             return;
         }
 
         try {
-            // Salva no arquivo entrada.txt
             Path caminho = Path.of("entrada.txt");
             Files.writeString(caminho, texto);
             outputArea.setText("Texto salvo em entrada.txt\n");
+            System.out.println("Texto salvo em entrada.txt: " + texto);
 
-            // Envia para o servidor
             URI uri = URI.create("http://localhost:8000/processar");
             URL url = uri.toURL();
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -74,28 +71,34 @@ public class ClienteGUI extends JFrame {
             con.setDoOutput(true);
             con.setRequestProperty("Content-Type", "text/plain; charset=utf-8");
 
+            System.out.println("Enviando requisição POST para " + uri);
+
             try (OutputStream os = con.getOutputStream()) {
                 os.write(texto.getBytes());
+                System.out.println("Texto enviado ao servidor.");
             }
 
             int status = con.getResponseCode();
             outputArea.append("Código HTTP: " + status + "\n");
+            System.out.println("Código HTTP recebido: " + status);
 
-            // Lê a resposta
             BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
             String linha;
             while ((linha = in.readLine()) != null) {
                 outputArea.append("Resposta: " + linha + "\n");
+                System.out.println("Resposta recebida: " + linha);
             }
             in.close();
 
         } catch (Exception ex) {
             outputArea.append("Erro ao enviar: " + ex.getMessage() + "\n");
+            System.out.println("Erro ao enviar requisição: " + ex.getMessage());
             ex.printStackTrace();
         }
     }
 
     public static void main(String[] args) {
+        System.out.println("Inicializando Cliente GUI...");
         SwingUtilities.invokeLater(ClienteGUI::new);
     }
 }

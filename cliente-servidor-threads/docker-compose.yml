@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  mestre:
+    build:
+      context: .
+      dockerfile: Dockerfile.mestre
+    ports:
+      - "8000:8000"
+
+  escravo1:
+    build:
+      context: .
+      dockerfile: Dockerfile.escravo1
+    ports:
+      - "8001:8001"
+
+  escravo2:
+    build:
+      context: .
+      dockerfile: Dockerfile.escravo2
+    ports:
+      - "8002:8002"

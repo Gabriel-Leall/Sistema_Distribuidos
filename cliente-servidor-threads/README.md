@@ -111,6 +111,7 @@ A interface gráfica será exibida, permitindo que você envie textos para o ser
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/16723068-12da-4a27-844b-d6f80f7680dc" width="400"/>
+   <img src="https://github.com/user-attachments/assets/1e5c8e28-909f-4c2f-ae42-4649d43ef982" width="400"/>
 </p>
 
 ### 4️⃣ Testar o Sistema

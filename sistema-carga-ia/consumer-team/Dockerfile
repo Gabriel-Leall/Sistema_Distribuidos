@@ -11,7 +11,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copia o script Python para o diretório de trabalho
-COPY generator.py .
+COPY consumer_team.py .
 
 # Comando para executar o script quando o container iniciar
 # O python -u garante que os prints apareçam imediatamente (unbuffered)

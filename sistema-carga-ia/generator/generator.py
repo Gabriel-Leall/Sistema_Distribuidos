@@ -5,18 +5,17 @@ import json
 import os
 import sys
 
-# --- Configurações ---
 RABBITMQ_HOST = os.getenv('RABBITMQ_HOST', 'localhost')
-MESSAGES_PER_SECOND = 5 # Taxa de geração de mensagens
+MESSAGES_PER_SECOND = 5 
 EXCHANGE_NAME = 'image_topic_exchange'
 ROUTING_KEYS = {
     'face': 'image.face',
     'team': 'image.team.crest'
 }
-# --------------------
+
 
 def connect_rabbitmq():
-    """Tenta conectar ao RabbitMQ com retries."""
+    
     retries = 10
     while retries > 0:
         try:
@@ -31,13 +30,11 @@ def connect_rabbitmq():
             retries -= 1
             time.sleep(5)
     print("Não foi possível conectar ao RabbitMQ após várias tentativas.")
-    sys.exit(1) # Sai se não conseguir conectar
+    sys.exit(1) 
 
 connection = connect_rabbitmq()
 channel = connection.channel()
 
-# Declara o exchange do tipo 'topic'
-# Durable=True significa que o exchange sobreviverá a reinicializações do broker
 channel.exchange_declare(exchange=EXCHANGE_NAME, exchange_type='topic', durable=True)
 
 print(f"Gerador pronto. Enviando {MESSAGES_PER_SECOND} mensagens por segundo para o exchange '{EXCHANGE_NAME}'...")
@@ -45,30 +42,30 @@ print(f"Gerador pronto. Enviando {MESSAGES_PER_SECOND} mensagens por segundo par
 message_counter = 0
 try:
     while True:
-        message_type = random.choice(list(ROUTING_KEYS.keys())) # 'face' or 'team'
+        message_type = random.choice(list(ROUTING_KEYS.keys())) 
         routing_key = ROUTING_KEYS[message_type]
 
         message_id = message_counter + 1
         message_body = {
             'id': message_id,
             'type': message_type,
-            # Simulando dados da imagem (poderia ser um path, URL ou até bytes)
+            
             'data': f"simulated_{message_type}_data_{message_id}"
         }
 
-        # Publica a mensagem no exchange com a routing key apropriada
+        
         channel.basic_publish(
             exchange=EXCHANGE_NAME,
             routing_key=routing_key,
             body=json.dumps(message_body),
             properties=pika.BasicProperties(
-                delivery_mode=2,  # Torna a mensagem persistente
+                delivery_mode=2,  
             ))
 
         print(f" [x] Enviado '{routing_key}':'{message_body['id']} - {message_body['type']}'")
         message_counter += 1
 
-        # Controla a taxa de envio
+       
         time.sleep(1.0 / MESSAGES_PER_SECOND)
 
 except KeyboardInterrupt:

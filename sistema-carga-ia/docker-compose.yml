@@ -2,17 +2,15 @@ version: "3.8"
 
 services:
   rabbitmq:
-    image: rabbitmq:3.11-management # Usamos a imagem com interface de gerenciamento
+    image: rabbitmq:3.11-management
     container_name: rabbitmq_broker
-    hostname: rabbitmq # Nome do host para conexão interna dos outros containers
+    hostname: rabbitmq 
     ports:
-      - "5672:5672" # Porta AMQP padrão do RabbitMQ
-      - "15672:15672" # Porta da interface de gerenciamento web
+      - "5672:5672" 
+      - "15672:15672" 
     volumes:
-      - rabbitmq_data:/var/lib/rabbitmq/ # Volume para persistir dados do RabbitMQ (opcional)
+      - rabbitmq_data:/var/lib/rabbitmq/ 
     environment:
-      # RABBITMQ_DEFAULT_USER: user
-      # RABBITMQ_DEFAULT_PASS: password
       RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: "-rabbit log_levels [{connection,error},{channel,error},{federation,'error'},{mirroring,'error'}]" # Reduz verbosidade dos logs
     networks:
       - app-network
@@ -29,9 +27,9 @@ services:
     container_name: message_generator
     depends_on:
       rabbitmq:
-        condition: service_healthy # Espera o RabbitMQ estar saudável
+        condition: service_healthy 
     environment:
-      - RABBITMQ_HOST=rabbitmq # Usa o nome do serviço definido no compose
+      - RABBITMQ_HOST=rabbitmq 
     networks:
       - app-network
     restart: on-failure
@@ -64,11 +62,9 @@ services:
       - app-network
     restart: on-failure
 
-# Define a rede customizada para os containers se comunicarem
 networks:
   app-network:
     driver: bridge
 
-# Define volumes para persistência (opcional)
 volumes:
   rabbitmq_data:

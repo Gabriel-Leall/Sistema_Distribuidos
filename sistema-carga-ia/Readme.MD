@@ -6,8 +6,6 @@
 
 Um sistema assíncrono e escalável que simula o processamento de imagens com **IA embarcada** usando **RabbitMQ** e **Docker**.
 
----
-
 ## 📸 Visão Geral
 
 Este projeto implementa uma arquitetura **event-driven** com múltiplos consumidores especializados:
@@ -16,8 +14,6 @@ Este projeto implementa uma arquitetura **event-driven** com múltiplos consumid
 - 🤖 **IA 1**: Detecta o **sentimento facial**
 - 🏆 **IA 2**: Reconhece o **time de futebol**
 - 🐇 **Broker RabbitMQ** para entrega e roteamento
-
----
 
 ## 📂 Estrutura do Projeto
 
@@ -35,16 +31,12 @@ Este projeto implementa uma arquitetura **event-driven** com múltiplos consumid
 │   └── consumer_team.py
 └── README.md
 
----
-
 ## 🔧 Tecnologias Usadas
 
 - Python 3.10+
 - RabbitMQ (topic exchange)
 - Docker e Docker Compose
 - Biblioteca `pika` para comunicação AMQP
-
----
 
 ## 🚀 Como Executar
 
@@ -66,8 +58,6 @@ docker-compose up --build
 - URL: http://localhost:15672
 - Usuário: guest
 - Senha: guest
-
----
 
 ## 🕵️‍♂️ Monitoramento
 - Os consumidores são mais lentos que o gerador (intencionalmente), então a fila cresce ao longo do tempo.

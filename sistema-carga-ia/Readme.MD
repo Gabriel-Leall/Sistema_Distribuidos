@@ -10,7 +10,7 @@ Um sistema assíncrono e escalável que simula o processamento de imagens com **
 
 Este projeto implementa uma arquitetura **event-driven** com múltiplos consumidores especializados:
 
-- 🎛 **Gerador** de mensagens (imagens faciais e brasões)
+- 🎛 **Gerador** de mensagens 
 - 🤖 **IA 1**: Detecta o **sentimento facial**
 - 🏆 **IA 2**: Reconhece o **time de futebol**
 - 🐇 **Broker RabbitMQ** para entrega e roteamento

@@ -11,7 +11,6 @@ services:
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq/ # Volume para persistir dados do RabbitMQ (opcional)
     environment:
-      # Você pode definir usuários/senhas aqui, mas para teste os padrões (guest/guest) funcionam
       # RABBITMQ_DEFAULT_USER: user
       # RABBITMQ_DEFAULT_PASS: password
       RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: "-rabbit log_levels [{connection,error},{channel,error},{federation,'error'},{mirroring,'error'}]" # Reduz verbosidade dos logs
@@ -39,7 +38,7 @@ services:
 
   consumer_face:
     build:
-      context: ./consumer_face
+      context: ./consumer-face
       dockerfile: Dockerfile
     container_name: face_consumer_ai
     depends_on:
@@ -53,7 +52,7 @@ services:
 
   consumer_team:
     build:
-      context: ./consumer_team
+      context: ./consumer-team
       dockerfile: Dockerfile
     container_name: team_consumer_ai
     depends_on:

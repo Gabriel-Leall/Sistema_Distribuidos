@@ -84,5 +84,5 @@ docker-compose up --build
 - Os consumidores são mais lentos que o gerador (intencionalmente), então a fila cresce ao longo do tempo.
 - Você pode observar o crescimento e o esvaziamento das filas via interface do RabbitMQ.
 
-![Painel do RabbitMQ](images/filas.png)
+![Painel do RabbitMQ](image/filas.png)
 

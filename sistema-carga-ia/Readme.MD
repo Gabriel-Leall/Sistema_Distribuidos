@@ -49,13 +49,18 @@ git clone https://github.com/seu-usuario/seu-repo.git
 cd seu-repo
 ```
 
-### 2. Construa e inicie os containers
+### 2. Instale as dependências
+```
+pip install -r requirements.txt
+```
+
+### 3. Construa e inicie os containers
 
 ```
 docker-compose up --build
 ```
 
-### 3. Acesse a interface de gerenciamento do RabbitMQ
+### 4. Acesse a interface de gerenciamento do RabbitMQ
 
 - URL: http://localhost:15672
 - Usuário: guest
@@ -65,5 +70,7 @@ docker-compose up --build
 - Os consumidores são mais lentos que o gerador (intencionalmente), então a fila cresce ao longo do tempo.
 - Você pode observar o crescimento e o esvaziamento das filas via interface do RabbitMQ.
 
-
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/Captura%20de%20tela%202025-05-04%20171032.png" width="400"/>
+</p>
 

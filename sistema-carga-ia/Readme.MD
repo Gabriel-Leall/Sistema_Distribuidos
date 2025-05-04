@@ -24,10 +24,10 @@ Este projeto implementa uma arquitetura **event-driven** com múltiplos consumid
 ├── generator/
 |   ├── Dockerfile
 │   └── generator.py
-├── consumer_face/
+├── consumer-face/
 |   ├── Dockerfile
 │   └── consumer_face.py
-├── consumer_team/
+├── consumer-team/
 |   ├── Dockerfile
 │   └── consumer_team.py
 └── README.md
@@ -66,11 +66,23 @@ docker-compose up --build
 - Usuário: guest
 - Senha: guest
 
+## 🔄 Fluxo das Mensagens
+
+1. O generator envia mensagens para o exchange image_topic_exchange com routing keys como:
+- image.face
+- image.team.crest
+
+2. O exchange (do tipo topic) distribui as mensagens:
+- consumer_face recebe mensagens image.face
+- consumer_team recebe mensagens image.team.
+
+3. Cada consumidor simula uma análise com IA:
+- Rosto → Sentimento
+- Time → Identificação do clube com confiança
+
 ## 🕵️‍♂️ Monitoramento
 - Os consumidores são mais lentos que o gerador (intencionalmente), então a fila cresce ao longo do tempo.
 - Você pode observar o crescimento e o esvaziamento das filas via interface do RabbitMQ.
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/Captura%20de%20tela%202025-05-04%20171032.png" width="400"/>
-</p>
+![Painel do RabbitMQ](images/rabbitmq_dashboard.png)
 

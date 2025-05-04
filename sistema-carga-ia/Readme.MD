@@ -31,7 +31,7 @@ Este projeto implementa uma arquitetura **event-driven** com múltiplos consumid
 |   ├── Dockerfile
 │   └── consumer_team.py
 └── README.md
-´´´
+```
 
 ## 🔧 Tecnologias Usadas
 
@@ -47,13 +47,13 @@ Este projeto implementa uma arquitetura **event-driven** com múltiplos consumid
 ```
 git clone https://github.com/seu-usuario/seu-repo.git
 cd seu-repo
-´´´
+```
 
 ### 2. Construa e inicie os containers
 
 ```
 docker-compose up --build
-´´´
+```
 
 ### 3. Acesse a interface de gerenciamento do RabbitMQ
 

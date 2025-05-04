@@ -17,6 +17,7 @@ Este projeto implementa uma arquitetura **event-driven** com múltiplos consumid
 
 ## 📂 Estrutura do Projeto
 
+```
 .
 ├── docker-compose.yml
 ├── requirements.txt
@@ -30,6 +31,7 @@ Este projeto implementa uma arquitetura **event-driven** com múltiplos consumid
 |   ├── Dockerfile
 │   └── consumer_team.py
 └── README.md
+´´´
 
 ## 🔧 Tecnologias Usadas
 
@@ -42,14 +44,14 @@ Este projeto implementa uma arquitetura **event-driven** com múltiplos consumid
 
 ### 1. Clone o repositório
 
-```bash
+```
 git clone https://github.com/seu-usuario/seu-repo.git
 cd seu-repo
 ´´´
 
 ### 2. Construa e inicie os containers
 
-```bash
+```
 docker-compose up --build
 ´´´
 

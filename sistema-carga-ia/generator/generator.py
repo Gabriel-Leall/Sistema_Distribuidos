@@ -13,9 +13,7 @@ ROUTING_KEYS = {
     'team': 'image.team.crest'
 }
 
-
 def connect_rabbitmq():
-    
     retries = 10
     while retries > 0:
         try:
@@ -34,6 +32,7 @@ def connect_rabbitmq():
 
 connection = connect_rabbitmq()
 channel = connection.channel()
+channel.confirm_delivery()  
 
 channel.exchange_declare(exchange=EXCHANGE_NAME, exchange_type='topic', durable=True)
 
@@ -49,23 +48,25 @@ try:
         message_body = {
             'id': message_id,
             'type': message_type,
-            
             'data': f"simulated_{message_type}_data_{message_id}"
         }
 
-        
-        channel.basic_publish(
-            exchange=EXCHANGE_NAME,
-            routing_key=routing_key,
-            body=json.dumps(message_body),
-            properties=pika.BasicProperties(
-                delivery_mode=2,  
-            ))
+        try:
+            channel.basic_publish(
+                exchange=EXCHANGE_NAME,
+                routing_key=routing_key,
+                body=json.dumps(message_body),
+                properties=pika.BasicProperties(
+                    delivery_mode=2,
+                )
+            )
+            print(f" [✔] ACK recebido para '{routing_key}':'{message_body['id']} - {message_body['type']}'")
+        except pika.exceptions.UnroutableError:
+            print(f" [✖] Mensagem não roteável: '{routing_key}'")
+        except Exception as e:
+            print(f" [✖] Erro ao publicar: {e}")
 
-        print(f" [x] Enviado '{routing_key}':'{message_body['id']} - {message_body['type']}'")
         message_counter += 1
-
-       
         time.sleep(1.0 / MESSAGES_PER_SECOND)
 
 except KeyboardInterrupt:

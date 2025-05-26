@@ -26,7 +26,7 @@ def main():
     except Exception as e:
         print(f"\nErro durante a execução dos testes: {str(e)}")
     finally:
-        print("\n=== Finalizando Teste ===")
+        print("\n=== Finalizando Teste ========")
 
 if __name__ == "__main__":
     main() 

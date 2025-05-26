@@ -1,18 +1,40 @@
 import socket
 import random
 import time
-from typing import List
+from typing import List, Dict
+from collections import deque
 from .abstract_proxy import AbstractProxy
 from .target_address import TargetAddress
 
 class LoadBalancerProxy(AbstractProxy):
-    def __init__(self, targets: List[TargetAddress]):
+    def __init__(self, config: Dict):
         super().__init__()
-        self.targets = targets
-        self.proxy_name = "LoadBalancerProxy"
-        self.local_port = 8081
+        self.config = config
+        self.proxy_name = config['name']
+        self.local_port = config['port']
         self.current_target_index = 0
-        self.num_services = len(targets)
+        self.num_services = config['num_services']
+        self.queue = deque(maxlen=config['queue_size'])
+        self.service_time = config['service_time']
+        self.std = config['std']
+        self.is_source = config['is_source']
+        
+        # Criar lista de serviços
+        self.targets = self._create_services()
+        self.connection_destiny_sockets = []
+
+    def _create_services(self) -> List[TargetAddress]:
+        """Cria a lista de serviços baseada na configuração."""
+        services = []
+        for i in range(self.num_services):
+            service = TargetAddress(
+                host='localhost',
+                port=self.config['port'] + i + 1,
+                service_time=self.service_time,
+                std=self.std
+            )
+            services.append(service)
+        return services
 
     def _handle_origin_connection(self):
         """Lida com a conexão de origem."""
@@ -100,13 +122,19 @@ class LoadBalancerProxy(AbstractProxy):
 
     def _handle_message(self, message: str):
         """Lida com mensagens normais."""
-        if self.is_destiny_free(self.connection_destiny_socket):
+        if len(self.queue) >= self.config['queue_size']:
+            print(f"Fila cheia, mensagem descartada: {message}")
+            return
+
+        if self.is_destiny_free(self.connection_destiny_sockets[self.current_target_index]):
             try:
-                self.connection_destiny_socket.send(message.encode())
+                self.connection_destiny_sockets[self.current_target_index].send(message.encode())
+                self.current_target_index = (self.current_target_index + 1) % len(self.connection_destiny_sockets)
             except:
                 print(f"Erro ao enviar mensagem para destino: {message}")
         else:
-            print(f"Mensagem descartada: {message}")
+            self.queue.append(message)
+            print(f"Mensagem adicionada à fila: {message}")
 
     def _handle_ping_message(self, socket_connection: socket.socket):
         """Lida com mensagens de ping."""
@@ -116,23 +144,24 @@ class LoadBalancerProxy(AbstractProxy):
             print(f"Erro ao enviar resposta de ping: {e}")
 
     def _create_connection_with_destiny(self):
-        """Cria conexão com o destino."""
+        """Cria conexões com todos os serviços de destino."""
         try:
-            if self.connection_destiny_socket:
+            # Limpa conexões existentes
+            for socket in self.connection_destiny_sockets:
                 try:
-                    self.connection_destiny_socket.close()
+                    socket.close()
                 except:
                     pass
+            self.connection_destiny_sockets.clear()
             
-            target = self.targets[self.current_target_index]
-            self.connection_destiny_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.connection_destiny_socket.connect((target.host, target.port))
-            
-            # Atualiza o índice para o próximo alvo
-            self.current_target_index = (self.current_target_index + 1) % len(self.targets)
+            # Cria novas conexões para cada serviço
+            for target in self.targets:
+                socket_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                socket_connection.connect((target.host, target.port))
+                self.connection_destiny_sockets.append(socket_connection)
             
         except Exception as e:
-            print(f"Erro ao criar conexão com destino: {e}")
+            print(f"Erro ao criar conexões com destino: {e}")
 
     def _register_time_when_arrives(self, received_message: str) -> str:
         """Registra o tempo quando a mensagem chega."""
@@ -164,4 +193,27 @@ class LoadBalancerProxy(AbstractProxy):
     @staticmethod
     def get_random_number() -> int:
         """Gera um número aleatório entre 1000 e 9000."""
-        return random.randint(1000, 9000) 
+        return random.randint(1000, 9000)
+
+    def _process_queue(self):
+        """Processa mensagens na fila."""
+        while self.is_running and self.queue:
+            message = self.queue[0]
+            if self.is_destiny_free(self.connection_destiny_sockets[self.current_target_index]):
+                try:
+                    self.connection_destiny_sockets[self.current_target_index].send(message.encode())
+                    self.queue.popleft()
+                    self.current_target_index = (self.current_target_index + 1) % len(self.connection_destiny_sockets)
+                except:
+                    print(f"Erro ao processar mensagem da fila: {message}")
+            else:
+                break
+
+    def start(self):
+        """Inicia o balanceador de carga."""
+        super().start()
+        # Inicia thread para processar a fila
+        import threading
+        queue_thread = threading.Thread(target=self._process_queue)
+        queue_thread.daemon = True
+        queue_thread.start() 

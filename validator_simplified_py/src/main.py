@@ -1,8 +1,18 @@
 from domain.local_test_services import LocalTest_Services
+from domain.load_balancer_proxy import LoadBalancerProxy
+from config import BALANCER1, BALANCER2
 
 def main():
+    # Cria as instâncias dos balanceadores
+    balancer1 = LoadBalancerProxy(BALANCER1)
+    balancer2 = LoadBalancerProxy(BALANCER2)
+    
     # Cria a instância do teste
     test = LocalTest_Services()
+    
+    # Inicia os balanceadores
+    balancer1.start()
+    balancer2.start()
     
     # Executa os testes
     print("Iniciando coleta experimental...")

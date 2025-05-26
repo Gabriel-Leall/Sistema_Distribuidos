@@ -4,20 +4,23 @@ from .source import Source
 from .service_proxy import ServiceProxy
 from .load_balancer_proxy import LoadBalancerProxy
 from .target_address import TargetAddress
+from config import BALANCER1, BALANCER2
 import json
 
 class LocalTest_Services:
     def __init__(self):
         # Configuração dos serviços
-        targets = [
-            TargetAddress("localhost", 8080),
-            TargetAddress("localhost", 8081),
-            TargetAddress("localhost", 8082)
-        ]
+        service_target = TargetAddress("localhost", 8080)
         
-        self.service_proxy = ServiceProxy(targets[0])
-        self.load_balancer = LoadBalancerProxy(targets)
-        self.source = Source(self.service_proxy, self.load_balancer)
+        # Cria os balanceadores com as configurações
+        self.balancer1 = LoadBalancerProxy(BALANCER1)
+        self.balancer2 = LoadBalancerProxy(BALANCER2)
+        
+        # Cria o service proxy
+        self.service_proxy = ServiceProxy(service_target)
+        
+        # Cria o source
+        self.source = Source(self.service_proxy, self.balancer1)
         
         # Configuração dos tempos de transição
         self.transition_times: Dict[str, List[float]] = {
@@ -46,6 +49,8 @@ class LocalTest_Services:
         """
         # Inicia os serviços
         print("Iniciando servicos...")
+        self.balancer1.start()
+        self.balancer2.start()
         self.source.start()
         time.sleep(2)  # Aguarda os serviços iniciarem
         

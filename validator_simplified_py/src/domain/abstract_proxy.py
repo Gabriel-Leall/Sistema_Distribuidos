@@ -13,50 +13,56 @@ class AbstractProxy:
         self.origin_thread: Optional[threading.Thread] = None
         self.destiny_thread: Optional[threading.Thread] = None
         self.is_running = True
+        self.server_socket: Optional[socket.socket] = None
 
     def start(self):
         """Inicia o proxy."""
-        self.origin_thread = threading.Thread(target=self._connection_establishment_origin_thread)
-        self.destiny_thread = threading.Thread(target=self._connection_establishment_destiny_thread)
-        
-        self.origin_thread.start()
-        self.destiny_thread.start()
+        try:
+            # Cria o socket do servidor
+            self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            self.server_socket.bind(('localhost', self.local_port))
+            self.server_socket.listen(1)
+            
+            # Aceita conexão de origem
+            self.connection_origin_socket, _ = self.server_socket.accept()
+            
+            # Inicia thread para lidar com conexão de origem
+            self.origin_thread = threading.Thread(target=self._handle_origin_connection)
+            self.origin_thread.daemon = True
+            self.origin_thread.start()
+            
+            # Inicia thread para lidar com conexão de destino
+            self.destiny_thread = threading.Thread(target=self._handle_destiny_connection)
+            self.destiny_thread.daemon = True
+            self.destiny_thread.start()
+            
+        except Exception as e:
+            print(f"Erro ao iniciar proxy: {e}")
+            self.stop()
 
     def stop(self):
         """Para o proxy."""
         self.is_running = False
+        
+        # Fecha conexões
         if self.connection_origin_socket:
-            self.connection_origin_socket.close()
-        if self.connection_destiny_socket:
-            self.connection_destiny_socket.close()
-
-    def _connection_establishment_origin_thread(self):
-        """Thread para estabelecer conexão com a origem."""
-        try:
-            server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            server_socket.bind(('localhost', self.local_port))
-            server_socket.listen(1)
-            
-            while self.is_running:
-                self.connection_origin_socket, _ = server_socket.accept()
-                self._handle_origin_connection()
+            try:
+                self.connection_origin_socket.close()
+            except:
+                pass
                 
-        except Exception as e:
-            print(f"Erro na thread de origem: {e}")
-        finally:
-            server_socket.close()
-
-    def _connection_establishment_destiny_thread(self):
-        """Thread para estabelecer conexão com o destino."""
-        try:
-            while self.is_running:
-                if self.target_address:
-                    self.connection_destiny_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                    self.connection_destiny_socket.connect((self.target_address.host, self.target_address.port))
-                    self._handle_destiny_connection()
-                    
-        except Exception as e:
-            print(f"Erro na thread de destino: {e}")
+        if self.server_socket:
+            try:
+                self.server_socket.close()
+            except:
+                pass
+                
+        if self.connection_destiny_socket:
+            try:
+                self.connection_destiny_socket.close()
+            except:
+                pass
 
     def _handle_origin_connection(self):
         """Método para lidar com a conexão de origem."""

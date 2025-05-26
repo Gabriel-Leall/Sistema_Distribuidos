@@ -2,18 +2,18 @@ import socket
 import time
 import threading
 from typing import List, Dict, Any
-from .service_proxy import ServiceProxy
 from .load_balancer_proxy import LoadBalancerProxy
 from .utils import Utils
 
 class Source:
-    def __init__(self, service_proxy: ServiceProxy, load_balancer: LoadBalancerProxy):
-        self.service_proxy = service_proxy
+    def __init__(self, load_balancer: LoadBalancerProxy):
         self.load_balancer = load_balancer
         self.source_current_index_message = 1
         self.arrival_delay = 2000  # 2 segundos
         self.model_feeding_stage = True  # Inicialmente definido como True
         self.dropp_count = 0
+        self.connection_socket = None
+        print("Source inicializado")
 
     def process_request(self, request: Dict[str, Any]):
         """
@@ -26,26 +26,32 @@ class Source:
         if not msg:
             return
             
-        # Envia a mensagem para o serviço apropriado
-        if self.is_destiny_free(self.service_proxy.connection_destiny_socket):
+        print(f"Processando requisição do tipo: {request.get('type', 'desconhecido')}")
+        # Envia a mensagem para o balanceador de carga
+        if self.is_destiny_free(self.load_balancer):
             self.send_message_to_destiny(msg)
         else:
             print(f"\n[DROPPED] Mensagem descartada em Source:")
             print(f"  - Tipo: {request.get('type', 'desconhecido')}")
             print(f"  - Mensagem: {msg.strip()}")
-            print(f"  - Motivo: Servico ocupado")
+            print(f"  - Motivo: Balanceador ocupado")
             print(f"  - Total de mensagens descartadas: {self.dropp_count + 1}")
             self.dropp_count += 1
 
     def start(self):
         """Inicia o Source."""
         try:
-            # Inicia os proxies
-            self.service_proxy.start()
+            print("Iniciando Source...")
+            # Conecta ao balanceador
+            self.connection_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.connection_socket.connect(('localhost', self.load_balancer.local_port))
+            print(f"Source conectado ao balanceador na porta {self.load_balancer.local_port}")
+            
+            # Inicia o balanceador
             self.load_balancer.start()
             
             time.sleep(0.1)
-            print("Starting source")
+            print("Source iniciado")
             
             if self.model_feeding_stage:
                 self.send_message_feeding_stage()
@@ -66,36 +72,38 @@ class Source:
         
         for j in range(10):
             msg = f"1;{self.source_current_index_message};{int(time.time() * 1000)};\n"
+            print(f"Enviando mensagem {self.source_current_index_message}")
             self.send(msg)
             self.source_current_index_message += 1
             time.sleep(self.arrival_delay / 1000)
 
     def send(self, msg: str):
         """Envia uma mensagem."""
-        if self.is_destiny_free(self.service_proxy.connection_destiny_socket):
+        if self.is_destiny_free(self.load_balancer):
             self.send_message_to_destiny(msg)
         else:
             print(f"\n[DROPPED] Mensagem descartada em Source:")
             print(f"  - Mensagem: {msg.strip()}")
-            print(f"  - Motivo: Servico ocupado")
+            print(f"  - Motivo: Balanceador ocupado")
             print(f"  - Total de mensagens descartadas: {self.dropp_count + 1}")
             self.dropp_count += 1
         time.sleep(self.arrival_delay / 1000)
 
     def send_message_to_destiny(self, msg: str):
-        """Envia mensagem para o destino."""
+        """Envia mensagem para o destino (LoadBalancer)."""
         try:
-            self.service_proxy.connection_destiny_socket.send(msg.encode())
+            self.connection_socket.send(msg.encode())
+            print(f"Mensagem enviada para balanceador: {msg.strip()}")
         except Exception as e:
-            print(f"Erro ao enviar mensagem para destino: {e}")
+            print(f"Erro ao enviar mensagem para balanceador: {e}")
 
-    def is_destiny_free(self, socket_connection: socket.socket) -> bool:
+    def is_destiny_free(self, load_balancer: LoadBalancerProxy) -> bool:
         """Verifica se o destino está livre."""
-        if not socket_connection:
+        if not load_balancer or not self.connection_socket:
             return False
         try:
-            socket_connection.send(b"ping")
-            response = socket_connection.recv(1024).decode()
+            self.connection_socket.send(b"ping")
+            response = self.connection_socket.recv(1024).decode()
             return response == "free"
         except:
             return False 

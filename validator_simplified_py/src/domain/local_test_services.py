@@ -1,26 +1,19 @@
 import time
 from typing import Dict, List
 from .source import Source
-from .service_proxy import ServiceProxy
 from .load_balancer_proxy import LoadBalancerProxy
-from .target_address import TargetAddress
 from config import BALANCER1, BALANCER2
 import json
 
 class LocalTest_Services:
     def __init__(self):
-        # Configuração dos serviços
-        service_target = TargetAddress("localhost", 8080)
-        
+        print("Inicializando LocalTest_Services...")
         # Cria os balanceadores com as configurações
         self.balancer1 = LoadBalancerProxy(BALANCER1)
         self.balancer2 = LoadBalancerProxy(BALANCER2)
         
-        # Cria o service proxy
-        self.service_proxy = ServiceProxy(service_target)
-        
-        # Cria o source
-        self.source = Source(self.service_proxy, self.balancer1)
+        # Cria o source conectado ao primeiro balanceador
+        self.source = Source(self.balancer1)
         
         # Configuração dos tempos de transição
         self.transition_times: Dict[str, List[float]] = {
@@ -39,6 +32,7 @@ class LocalTest_Services:
             'T4': 13.33,   # Transição curta
             'T5': 2030.33  # Transição longa
         }
+        print("LocalTest_Services inicializado")
 
     def run_test(self, num_iterations: int = 1):
         """
@@ -48,7 +42,7 @@ class LocalTest_Services:
             num_iterations (int): Número de iterações para cada transição
         """
         # Inicia os serviços
-        print("Iniciando servicos...")
+        print("\nIniciando servicos...")
         self.balancer1.start()
         self.balancer2.start()
         self.source.start()
@@ -66,6 +60,7 @@ class LocalTest_Services:
             print("-" * 30)
             
             # T1: Transição inicial
+            print("\nExecutando T1: Transição inicial")
             start_time = time.time()
             msg = f"1;0;{int(start_time * 1000)};\n"
             self.source.process_request({"type": "initial", "message": msg})
@@ -73,8 +68,10 @@ class LocalTest_Services:
             end_time = time.time()
             time_diff = (end_time - start_time) * 1000
             self.transition_times['T1'].append(time_diff)
+            print(f"T1 concluído em {time_diff}ms")
             
             # T2: Transição rápida
+            print("\nExecutando T2: Transição rápida")
             start_time = time.time()
             msg = f"1;1;{int(start_time * 1000)};\n"
             self.source.process_request({"type": "fast", "message": msg})
@@ -82,8 +79,10 @@ class LocalTest_Services:
             end_time = time.time()
             time_diff = (end_time - start_time) * 1000
             self.transition_times['T2'].append(time_diff)
+            print(f"T2 concluído em {time_diff}ms")
             
             # T3: Transição média
+            print("\nExecutando T3: Transição média")
             start_time = time.time()
             msg = f"1;2;{int(start_time * 1000)};\n"
             self.source.process_request({"type": "medium", "message": msg})
@@ -91,8 +90,10 @@ class LocalTest_Services:
             end_time = time.time()
             time_diff = (end_time - start_time) * 1000
             self.transition_times['T3'].append(time_diff)
+            print(f"T3 concluído em {time_diff}ms")
             
             # T4: Transição curta
+            print("\nExecutando T4: Transição curta")
             start_time = time.time()
             msg = f"1;3;{int(start_time * 1000)};\n"
             self.source.process_request({"type": "short", "message": msg})
@@ -100,8 +101,10 @@ class LocalTest_Services:
             end_time = time.time()
             time_diff = (end_time - start_time) * 1000
             self.transition_times['T4'].append(time_diff)
+            print(f"T4 concluído em {time_diff}ms")
             
             # T5: Transição longa
+            print("\nExecutando T5: Transição longa")
             start_time = time.time()
             msg = f"1;4;{int(start_time * 1000)};\n"
             self.source.process_request({"type": "long", "message": msg})
@@ -109,6 +112,7 @@ class LocalTest_Services:
             end_time = time.time()
             time_diff = (end_time - start_time) * 1000
             self.transition_times['T5'].append(time_diff)
+            print(f"T5 concluído em {time_diff}ms")
 
     def print_results(self):
         """Imprime os resultados dos testes."""
@@ -135,4 +139,5 @@ class LocalTest_Services:
         }
         
         with open(filename, 'w') as f:
-            json.dump(results, f, indent=4) 
+            json.dump(results, f, indent=4)
+        print(f"\nResultados salvos em {filename}") 

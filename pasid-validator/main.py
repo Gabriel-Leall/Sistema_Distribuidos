@@ -117,7 +117,7 @@ if __name__ == "__main__":
         elif papel == "balanceador":
             if len(sys.argv) < 4:
                 print("Erro: argumentos insuficientes para balanceador")
-                mostrar_ajuda()
+        
                 sys.exit(1)
                 
             porta = int(sys.argv[2])
@@ -128,7 +128,6 @@ if __name__ == "__main__":
         elif papel == "servico":
             if len(sys.argv) < 5:
                 print("Erro: argumentos insuficientes para serviço")
-                mostrar_ajuda()
                 sys.exit(1)
                 
             porta = int(sys.argv[2])
@@ -140,12 +139,10 @@ if __name__ == "__main__":
 
         else:
             print(f"Função desconhecida: {papel}")
-            mostrar_ajuda()
             sys.exit(1)
 
     except ValueError as e:
         print(f"Erro nos argumentos: {e}")
-        mostrar_ajuda()
         sys.exit(1)
     except Exception as e:
         print(f"Erro inesperado: {e}")

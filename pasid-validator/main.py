@@ -1,4 +1,4 @@
-from src.local_test_services import LocalTest_Services
+from .src.local_test_services import LocalTest_Services
 import time
 
 def main():

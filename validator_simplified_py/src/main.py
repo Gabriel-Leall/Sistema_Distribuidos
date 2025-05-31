@@ -14,7 +14,7 @@ def main():
     try:
         # Executa os testes
         print("\n=== Iniciando Execução dos Testes ===")
-        test.run_test(num_iterations=1)
+        test.run_test(num_iterations=10)
         
         # Imprime os resultados
         print("\n=== Resultados dos Testes ===")

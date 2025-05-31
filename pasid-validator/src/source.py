@@ -8,12 +8,12 @@ from src.abstract_proxy import AbstractProxy
 class Source(AbstractProxy):
     def __init__(self, config: Dict[str, Any]) -> None:
         """
-        Inicializa a fonte de mensagens para alimentação ou validação do modelo.
+        Inicializa a source de mensagens para alimentação ou validação do modelo.
         
         Args:
             config: Dicionário de configuração com parâmetros necessários
         """
-        super().__init__(config.get("arquivo_log", "log_fonte.txt"))
+        super().__init__(config.get("arquivo_log", "log_source.txt"))
         self.etapa_alimentacao_modelo: bool = config.get("etapa_alimentacao_modelo", False)
         self.atraso_chegada: int = config.get("atraso_chegada", 0)  # em ms
         self.max_mensagens_esperadas: int = config.get("max_mensagens_esperadas", 10)
@@ -26,7 +26,7 @@ class Source(AbstractProxy):
         self.ip_destino: str = config.get("ip_destino", "loadbalance1")
         self.porta_destino: int = config.get("porta_destino", 2000)
 
-        self.log(f"Fonte iniciando. Etapa alimentação: {self.etapa_alimentacao_modelo}")
+        self.log(f"source iniciando. Etapa alimentação: {self.etapa_alimentacao_modelo}")
         self.log(f"Destino para alimentação: {self.ip_destino}:{self.porta_destino}")
         self.log(f"Endereços dos LBs para validação: {enderecos_lb_str}")
         self.log(f"Qtd servicos por ciclo validação: {self.qtd_servicos}")
@@ -59,8 +59,8 @@ class Source(AbstractProxy):
         return time.time() * 1000  # Converte segundos para milissegundos
 
     def executar(self) -> None:
-        """Inicia o fluxo principal da fonte."""
-        self.log("Iniciando execução da fonte")
+        """Inicia o fluxo principal da source."""
+        self.log("Iniciando execução da source")
         if self.etapa_alimentacao_modelo:
             self.enviar_mensagens_alimentacao()
         else:
@@ -68,7 +68,7 @@ class Source(AbstractProxy):
                 self.log("ERRO: Validação sem LBs configurados. Abortando.")
                 return
             self.enviar_mensagens_validacao()
-        self.log("Execução da fonte concluída.")
+        self.log("Execução da source concluída.")
 
     def enviar_mensagens_alimentacao(self) -> None:
         """Envia mensagens para alimentar o modelo."""

@@ -1,141 +1,95 @@
-version: '3.8'
-
 services:
+
   ollama:
     image: ollama/ollama
     container_name: ollama
     entrypoint: "" 
     command: >
-      sh -c "ollama serve & sleep 5 && ollama pull llama3 && tail -f /dev/null"
+      sh -c "ollama serve & sleep 5 && ollama pull llama3.2 && tail -f /dev/null"
     ports:
       - "11434:11434"
     volumes:
       - ollama:/root/.ollama
     networks:
       - pasidnet
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:11434"]
-      interval: 5s
-      timeout: 10s
-      retries: 10
     
   source:
     build: .
-    command: ["python", "main.py", "fonte"]
+    command: python main.py source
     container_name: source
     depends_on:
-      loadbalance1:
-        condition: service_healthy
-      loadbalance2:
-        condition: service_healthy
+      - loadbalance1
+      - loadbalance2
     networks:
       - pasidnet
 
   loadbalance1:
     build: .
-    command: ["python", "main.py", "balanceador", "2000", "service1:4001,service2:4002"]
+    command: python main.py load_balancer 2000 "service1:4001,service2:4002"
     container_name: loadbalance1
     ports:
       - "2000:2000"
     depends_on:
-      service1:
-        condition: service_healthy
-      service2:
-        condition: service_healthy
+      - service1
+      - service2
     networks:
       - pasidnet
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:2000/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
 
   loadbalance2:
     build: .
-    command: ["python", "main.py", "balanceador", "3000", "service3:4100,service4:4101"]
+    command: python main.py load_balancer 3000 "service3:4100,service4:4101"
     container_name: loadbalance2
     ports:
       - "3000:3000"
     depends_on:
-      service3:
-        condition: service_healthy
-      service4:
-        condition: service_healthy
+      - service3
+      - service4
     networks:
       - pasidnet
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
 
   service1:
     build: .
-    command: ["python", "main.py", "servico", "4001", "100", "modelo1"]
+    command: python main.py service 4001 100
     container_name: service1
     networks:
       - pasidnet
     ports:
       - "4001:4001"
     depends_on:
-      ollama:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:4001/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
+      - ollama
 
   service2:
     build: .
-    command: ["python", "main.py", "servico", "4002", "100", "modelo2"]
+    command: python main.py service 4002 100
     container_name: service2
     networks:
       - pasidnet
     ports:
       - "4002:4002"
     depends_on:
-      ollama:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:4002/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
+      - ollama
 
   service3:
     build: .
-    command: ["python", "main.py", "servico", "4100", "100", "modelo3"]
+    command: python main.py service 4100 100
     container_name: service3
     networks:
       - pasidnet
     ports:
       - "4100:4100"
     depends_on:
-      ollama:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:4100/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
+      - ollama
 
   service4:
     build: .
-    command: ["python", "main.py", "servico", "4101", "100", "modelo4"]
+    command: python main.py service 4101 100
     container_name: service4
     networks:
       - pasidnet
     ports:
       - "4101:4101"
     depends_on:
-      ollama:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:4101/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
+      - ollama
 
 networks:
   pasidnet:

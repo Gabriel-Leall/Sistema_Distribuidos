@@ -5,7 +5,7 @@ from src.config import configuracao
 from typing import Optional, List, Tuple
 import sys
 
-def parsear_enderecos_servicos(enderecos_str: str) -> List[Tuple[str, int]]:
+def parsear_enderecos_services(enderecos_str: str) -> List[Tuple[str, int]]:
     """
     Converte string de endereços para lista de tuplas (ip, porta).
     
@@ -28,14 +28,14 @@ def parsear_enderecos_servicos(enderecos_str: str) -> List[Tuple[str, int]]:
 
 def iniciar_Source(config: Optional[dict] = None) -> None:
     """
-    Inicia a fonte para alimentação e validação do modelo.
+    Inicia a source para alimentação e validação do modelo.
     
     Args:
         config: Dicionário de configuração. Se None, carrega do arquivo.
     """
     if configuracao is None:
         configuracao = config()
-    print("Configuração carregada para Fonte:", config)
+    print("Configuração carregada para source:", config)
 
     # Etapa de alimentação
     print("\n=== ETAPA DE ALIMENTAÇÃO DO MODELO ===")
@@ -43,8 +43,8 @@ def iniciar_Source(config: Optional[dict] = None) -> None:
     config_alimentacao["etapa_alimentacao_modelo"] = True
     
     if config_alimentacao.get("habilitar_alimentacao", True):
-        fonte_alimentacao = Source(config_alimentacao)
-        fonte_alimentacao.executar()
+        source_alimentacao = Source(config_alimentacao)
+        source_alimentacao.executar()
     else:
         print("Etapa de alimentação desabilitada na configuração")
 
@@ -54,53 +54,53 @@ def iniciar_Source(config: Optional[dict] = None) -> None:
     config_validacao["etapa_alimentacao_modelo"] = False
     
     if config_validacao.get("habilitar_validacao", True):
-        fonte_validacao = Source(config_validacao)
-        fonte_validacao.executar()
+        source_validacao = Source(config_validacao)
+        source_validacao.executar()
     else:
         print("Etapa de validação desabilitada na configuração")
 
 def iniciar_balanceador(porta_escuta: int = 2000, 
-                       enderecos_servicos_str: Optional[str] = None) -> None:
+                       enderecos_services_str: Optional[str] = None) -> None:
     """
     Inicia um balanceador de carga.
     
     Args:
         porta_escuta: Porta para escutar conexões
-        enderecos_servicos_str: String com endereços dos serviços backend
+        enderecos_services_str: String com endereços dos serviços backend
     """
     try:
-        enderecos_servicos = []
-        if enderecos_servicos_str:
-            enderecos_servicos = parsear_enderecos_servicos(enderecos_servicos_str)
+        enderecos_services = []
+        if enderecos_services_str:
+            enderecos_services = parsear_enderecos_services(enderecos_services_str)
         
         print(f"\nIniciando Balanceador na porta {porta_escuta}")
-        print(f"Serviços backend: {enderecos_servicos or 'Nenhum'}")
+        print(f"Serviços backend: {enderecos_services or 'Nenhum'}")
         
         balanceador = LoadBalancerProxy(porta_escuta=porta_escuta, 
-                                     enderecos_servicos=enderecos_servicos)
+                                     enderecos_services=enderecos_services)
         balanceador.iniciar()
     except ValueError as e:
         print(f"ERRO: {e}")
         sys.exit(1)
 
-def iniciar_servico(porta: int, 
-                   tempo_servico_ms: float, 
+def iniciar_service(porta: int, 
+                   tempo_service_ms: float, 
                    nome_modelo: str) -> None:
     """
     Inicia uma instância de serviço.
     
     Args:
         porta: Porta para escutar conexões
-        tempo_servico_ms: Tempo simulado de serviço (ms)
+        tempo_service_ms: Tempo simulado de serviço (ms)
         nome_modelo: Nome do modelo IA a ser usado
     """
     print(f"\nIniciando Serviço na porta {porta}")
-    print(f"Modelo: {nome_modelo} | Tempo serviço: {tempo_servico_ms}ms")
+    print(f"Modelo: {nome_modelo} | Tempo serviço: {tempo_service_ms}ms")
     
-    servico = ServiceProxy(porta_escuta=porta,
-                     tempo_servico_ms=tempo_servico_ms,
+    service = ServiceProxy(porta_escuta=porta,
+                     tempo_service_ms=tempo_service_ms,
                      nome_modelo=nome_modelo)
-    servico.iniciar()
+    service.iniciar()
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
@@ -110,11 +110,10 @@ if __name__ == "__main__":
     config = configuracao()
 
     try:
-        if papel == "fonte":
-            print("\n[INICIANDO FONTE]")
+        if papel == "souce":
             iniciar_Source(config=config)
 
-        elif papel == "balanceador":
+        elif papel == "lb":
             if len(sys.argv) < 4:
                 print("Erro: argumentos insuficientes para balanceador")
         
@@ -123,18 +122,18 @@ if __name__ == "__main__":
             porta = int(sys.argv[2])
             enderecos = sys.argv[3]
             iniciar_balanceador(porta_escuta=porta, 
-                              enderecos_servicos_str=enderecos)
+                              enderecos_services_str=enderecos)
 
-        elif papel == "servico":
+        elif papel == "service":
             if len(sys.argv) < 5:
                 print("Erro: argumentos insuficientes para serviço")
                 sys.exit(1)
                 
             porta = int(sys.argv[2])
-            tempo_servico = float(sys.argv[3])
+            tempo_service = float(sys.argv[3])
             modelo = sys.argv[4]
-            iniciar_servico(porta=porta,
-                          tempo_servico_ms=tempo_servico,
+            iniciar_service(porta=porta,
+                          tempo_service_ms=tempo_service,
                           nome_modelo=modelo)
 
         else:

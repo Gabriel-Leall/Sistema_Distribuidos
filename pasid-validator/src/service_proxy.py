@@ -2,8 +2,8 @@ import socket
 import threading
 import time
 from queue import Queue
-from .abstract_proxy import AbstractProxy
-from .service_ia import IA
+from src.abstract_proxy import AbstractProxy
+from src.service_ia import IA
 
 class ServiceProxy(AbstractProxy):
     def __init__(self, porta_escuta: int, tempo_servico_ms: float, tamanho_max_fila: int = 10):

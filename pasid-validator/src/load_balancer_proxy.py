@@ -3,7 +3,7 @@ import threading
 import time
 from typing import List, Tuple
 from collections import deque
-from .abstract_proxy import AbstractProxy
+from src.abstract_proxy import AbstractProxy
 
 class LoadBalancerProxy(AbstractProxy):
     def __init__(self, porta_escuta: int, enderecos_servicos: List[Tuple[str, int]]):

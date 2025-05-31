@@ -2,7 +2,7 @@ import socket
 import datetime
 import time
 from typing import List, Dict, Any, Optional, Tuple
-from abstract_proxy import AbstractProxy
+from src.abstract_proxy import AbstractProxy
 
 
 class Source(AbstractProxy):

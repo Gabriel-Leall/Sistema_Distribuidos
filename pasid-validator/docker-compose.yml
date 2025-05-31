@@ -1,0 +1,99 @@
+services:
+
+  ollama:
+    image: ollama/ollama
+    container_name: ollama
+    entrypoint: "" 
+    command: >
+      sh -c "ollama serve & sleep 5 && ollama pull llama3.2 && tail -f /dev/null"
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama:/root/.ollama
+    networks:
+      - pasidnet
+    
+  source:
+    build: .
+    command: python main.py source
+    container_name: source
+    depends_on:
+      - loadbalance1
+      - loadbalance2
+    networks:
+      - pasidnet
+
+  loadbalance1:
+    build: .
+    command: python main.py load_balancer 2000 "service1:4001,service2:4002"
+    container_name: loadbalance1
+    ports:
+      - "2000:2000"
+    depends_on:
+      - service1
+      - service2
+    networks:
+      - pasidnet
+
+  loadbalance2:
+    build: .
+    command: python main.py load_balancer 3000 "service3:4100,service4:4101"
+    container_name: loadbalance2
+    ports:
+      - "3000:3000"
+    depends_on:
+      - service3
+      - service4
+    networks:
+      - pasidnet
+
+  service1:
+    build: .
+    command: python main.py service 4001 100
+    container_name: service1
+    networks:
+      - pasidnet
+    ports:
+      - "4001:4001"
+    depends_on:
+      - ollama
+
+  service2:
+    build: .
+    command: python main.py service 4002 100
+    container_name: service2
+    networks:
+      - pasidnet
+    ports:
+      - "4002:4002"
+    depends_on:
+      - ollama
+
+  service3:
+    build: .
+    command: python main.py service 4100 100
+    container_name: service3
+    networks:
+      - pasidnet
+    ports:
+      - "4100:4100"
+    depends_on:
+      - ollama
+
+  service4:
+    build: .
+    command: python main.py service 4101 100
+    container_name: service4
+    networks:
+      - pasidnet
+    ports:
+      - "4101:4101"
+    depends_on:
+      - ollama
+
+networks:
+  pasidnet:
+    driver: bridge
+
+volumes:
+  ollama:

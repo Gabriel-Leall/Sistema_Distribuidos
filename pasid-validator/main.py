@@ -104,7 +104,6 @@ def iniciar_servico(porta: int,
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        mostrar_ajuda()
         sys.exit(1)
 
     papel = sys.argv[1].lower()

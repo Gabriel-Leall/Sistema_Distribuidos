@@ -1,0 +1,5 @@
+FROM python:3.10
+WORKDIR /app
+COPY . .
+RUN pip install torch transformers deepseek-llm
+CMD ["python", "src/domain/service_heavy.py"]

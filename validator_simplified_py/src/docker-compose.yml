@@ -1,0 +1,52 @@
+version: "3.8"
+services:
+  source:
+    build:
+      context: .
+      dockerfile: src/domain/Components.docker
+    command: python src/main.py
+    depends_on:
+      - balancer1
+      - balancer2
+
+  balancer1:
+    build:
+      context: .
+      dockerfile: src/domain/Components.docker
+    command: python src/domain/load_balancer_proxy.py --port 2000 --services service1,service2
+    depends_on:
+      - service1
+      - service2
+
+  balancer2:
+    build:
+      context: .
+      dockerfile: src/domain/Components.docker
+    command: python src/domain/load_balancer_proxy.py --port 3000 --services service3,service4
+    depends_on:
+      - service3
+      - service4
+
+  service1:
+    build:
+      context: .
+      dockerfile: src/domain/Components.docker
+    command: python src/domain/service_heavy.py
+
+  service2:
+    build:
+      context: .
+      dockerfile: src/domain/Components.docker
+    command: python src/domain/service_heavy.py
+
+  service3:
+    build:
+      context: .
+      dockerfile: src/domain/Components.docker
+    command: python src/domain/service_heavy.py
+
+  service4:
+    build:
+      context: .
+      dockerfile: src/domain/Components.docker
+    command: python src/domain/service_heavy.py

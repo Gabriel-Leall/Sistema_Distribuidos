@@ -37,8 +37,7 @@ def iniciar_Source(config: Optional[dict] = None) -> None:
         config = configuracao()
     print("Configuração carregada para source:", config)
 
-    # Etapa de alimentação
-    print("\n=== ETAPA DE ALIMENTAÇÃO DO MODELO ===")
+    print("\n----- Etapa de alimentação do modelo -----")
     config_alimentacao = config.copy()
     config_alimentacao["etapa_alimentacao_modelo"] = True
     
@@ -48,8 +47,7 @@ def iniciar_Source(config: Optional[dict] = None) -> None:
     else:
         print("Etapa de alimentação desabilitada na configuração")
 
-    # Etapa de validação
-    print("\n=== ETAPA DE VALIDAÇÃO ===")
+    print("\n---------- Etapa de validação ----------")
     config_validacao = config.copy()
     config_validacao["etapa_alimentacao_modelo"] = False
     
@@ -113,7 +111,7 @@ def configuracao() -> Dict[str, Any]:
         'target_port': 2000,         
         'max_considered_messages_expected': 10, 
         'arrival_delay': 100,
-        'qtd_services': [1, 2], 
+        'qtd_servicos': [1, 2], 
         'enderecos_load_balancers': 'loadbalance1:2000,loadbalance2:3000' 
     }
 

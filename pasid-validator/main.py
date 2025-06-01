@@ -1,9 +1,9 @@
 from src.load_balancer_proxy import LoadBalancerProxy
 from src.service_proxy import ServiceProxy
 from src.source import Source
-from src.config import configuracao
 from typing import Optional, List, Tuple
 import sys
+from typing import Dict, Any
 
 def parsear_enderecos_services(enderecos_str: str) -> List[Tuple[str, int]]:
     """
@@ -33,8 +33,8 @@ def iniciar_Source(config: Optional[dict] = None) -> None:
     Args:
         config: Dicionário de configuração. Se None, carrega do arquivo.
     """
-    if configuracao is None:
-        configuracao = config()
+    if config is None:
+        config = configuracao()
     print("Configuração carregada para source:", config)
 
     # Etapa de alimentação
@@ -102,6 +102,21 @@ def iniciar_service(porta: int,
                      modelo_ai=modelo_ai)
     service.iniciar()
 
+
+def configuracao() -> Dict[str, Any]:
+    return {
+        'model_feeding_stage_enabled': True,  
+        'validation_stage_enabled': True,    
+        'model_feeding_stage': False, 
+        'source_port': 1000,
+        'target_ip': 'loadbalance1', 
+        'target_port': 2000,         
+        'max_considered_messages_expected': 10, 
+        'arrival_delay': 100,
+        'qtd_services': [1, 2], 
+        'loadbalancer_addresses': 'loadbalance1:2000,loadbalance2:3000' 
+    }
+
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         sys.exit(1)
@@ -111,7 +126,7 @@ if __name__ == "__main__":
 
     try:
         if funcao == "source":
-            iniciar_Source(config=configuracao())
+            iniciar_Source(config=config)
 
         elif funcao == "loadbalance":
             if len(sys.argv) < 4:

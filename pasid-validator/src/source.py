@@ -10,27 +10,28 @@ class Source(AbstractProxy):
     def __init__(self, config: Dict[str, Any]) -> None:
         """
         Inicializa a source de mensagens para alimentação ou validação do modelo.
-        
+
         Args:
             config: Dicionário de configuração com parâmetros necessários
         """
-        super().__init__(config.get("arquivo_log", "log_source.txt"))
+        super().__init__(config.get("arquivo_log", "log_source.json"))
         self.etapa_alimentacao_modelo: bool = config.get("etapa_alimentacao_modelo", False)
         self.atraso_chegada: int = config.get("atraso_chegada", 0)  # em ms
         self.max_mensagens_esperadas: int = config.get("max_mensagens_esperadas", 10)
         self.contador_mensagem_atual: int = 0
-        self.qtd_servicos: List[int] = config.get("qtd_servicos", [])  # Ex: [1, 2] N de servicos por LB
-        
+        self.qtd_servicos: List[int] = config.get("qtd_servicos", [])  # Ex: [1, 2] N de serviços por LB
+
         enderecos_lb_str = config.get("enderecos_load_balancers", "")
+
         self.tempos_resposta: List[float] = []  # Armazena MRTs calculados
 
         self.ip_destino: str = config.get("ip_destino", "loadbalance1")
         self.porta_destino: int = config.get("porta_destino", 2000)
 
-        self.log(f"source iniciando. Etapa alimentação: {self.etapa_alimentacao_modelo}")
+        self.log(f"Source iniciando. Etapa alimentação: {self.etapa_alimentacao_modelo}")
         self.log(f"Destino para alimentação: {self.ip_destino}:{self.porta_destino}")
         self.log(f"Endereços dos LBs para validação: {enderecos_lb_str}")
-        self.log(f"Qtd servicos por ciclo validação: {self.qtd_servicos}")
+        self.log(f"Qtd serviços por ciclo validação: {self.qtd_servicos}")
         self.log(f"Atraso entre mensagens: {self.atraso_chegada} ms")
         self.log(f"Máx mensagens por ciclo: {self.max_mensagens_esperadas}")
 
@@ -39,7 +40,7 @@ class Source(AbstractProxy):
             self.enderecos_lb: List[Tuple[str, int]] = []
             try:
                 for endereco in enderecos_lb_str.split(","):
-                    ip, porta_str = endereco.split(":")
+                    ip, porta_str = endereco.strip().split(":")
                     self.enderecos_lb.append((ip, int(porta_str)))
             except ValueError as e:
                 self.log(f"ERRO ao processar enderecos_lb: '{enderecos_lb_str}'. {e}")

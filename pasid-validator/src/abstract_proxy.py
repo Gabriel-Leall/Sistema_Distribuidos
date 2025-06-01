@@ -1,75 +1,37 @@
-import socket
-import threading
-from typing import Optional
-
+import json
+from datetime import datetime
 
 class AbstractProxy:
-    def __init__(self):
-        self.proxy_name = ""
-        self.local_port = 0
-        self.connection_origin_socket: Optional[socket.socket] = None
-        self.connection_destiny_socket: Optional[socket.socket] = None
-        self.origin_thread: Optional[threading.Thread] = None
-        self.destiny_thread: Optional[threading.Thread] = None
-        self.is_running = True
-        self.server_socket: Optional[socket.socket] = None
 
-    def start(self):
-        """Inicia o proxy."""
+    def __init__(self, log_file="log.json"):
+        self.log_file = log_file
+        self.init_log_file()
+
+    def init_log_file(self):
+        # Cria ou limpa o arquivo JSON com uma lista vazia
+        with open(self.log_file, 'w') as f:
+            json.dump([], f, indent=4)
+
+    def log(self, message: str):
+        print(message)  # Continua exibindo no console
+
+        # Cria o registro com timestamp
+        log_entry = {
+            "timestamp": datetime.now().isoformat(),
+            "message": message
+        }
+
+        # Lê os logs atuais
         try:
-            # Cria o socket do servidor
-            self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            self.server_socket.bind(('localhost', self.local_port))
-            self.server_socket.listen(1)
-            
-            # Aceita conexão de origem
-            self.connection_origin_socket, _ = self.server_socket.accept()
-            
-            # Inicia thread para lidar com conexão de origem
-            self.origin_thread = threading.Thread(target=self._handle_origin_connection)
-            self.origin_thread.daemon = True
-            self.origin_thread.start()
-            
-            # Inicia thread para lidar com conexão de destino
-            self.destiny_thread = threading.Thread(target=self._handle_destiny_connection)
-            self.destiny_thread.daemon = True
-            self.destiny_thread.start()
-            
-        except Exception as e:
-            print(f"Erro ao iniciar proxy: {e}")
-            self.stop()
+            with open(self.log_file, 'r') as f:
+                logs = json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError):
+            logs = []
 
-    def stop(self):
-        """Para o proxy."""
-        self.is_running = False
-        
-        # Fecha conexões
-        if self.connection_origin_socket:
-            try:
-                self.connection_origin_socket.close()
-            except:
-                pass
-                
-        if self.server_socket:
-            try:
-                self.server_socket.close()
-            except:
-                pass
-                
-        if self.connection_destiny_socket:
-            try:
-                self.connection_destiny_socket.close()
-            except:
-                pass
+        # Adiciona o novo log
+        logs.append(log_entry)
 
-    def is_destiny_free(self, socket_connection: Optional[socket.socket]) -> bool:
-        """Verifica se o destino está livre."""
-        if not socket_connection:
-            return False
-        try:
-            socket_connection.send(b"ping")
-            response = socket_connection.recv(1024).decode()
-            return response == "free"
-        except:
-            return False 
+        # Salva de volta no arquivo
+        with open(self.log_file, 'w') as f:
+            json.dump(logs, f, indent=4)
+   

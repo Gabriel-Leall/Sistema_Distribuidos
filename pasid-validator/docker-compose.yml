@@ -11,7 +11,8 @@ services:
     volumes:
       - ollama:/root/.ollama
     networks:
-      - pasidnet
+      - sdnet
+    
     
   source:
     build: .
@@ -21,7 +22,9 @@ services:
       - loadbalance1
       - loadbalance2
     networks:
-      - pasidnet
+      - sdnet
+    volumes:
+      - ./logs:/app/logs
 
   loadbalance1:
     build: .
@@ -33,7 +36,9 @@ services:
       - service1
       - service2
     networks:
-      - pasidnet
+      - sdnet
+    volumes:
+      - ./logs:/app/logs
 
   loadbalance2:
     build: .
@@ -45,54 +50,64 @@ services:
       - service3
       - service4
     networks:
-      - pasidnet
+      - sdnet
+    volumes:
+      - ./logs:/app/logs
 
   service1:
     build: .
-    command: python main.py service 4001 100
+    command: python main.py service 4001 100 llama3.2
     container_name: service1
     networks:
-      - pasidnet
+      - sdnet
     ports:
       - "4001:4001"
     depends_on:
       - ollama
+    volumes:
+      - ./logs:/app/logs
 
   service2:
     build: .
-    command: python main.py service 4002 100
+    command: python main.py service 4002 100 llama3.2
     container_name: service2
     networks:
-      - pasidnet
+      - sdnet
     ports:
       - "4002:4002"
     depends_on:
       - ollama
+    volumes:
+      - ./logs:/app/logs
 
   service3:
     build: .
-    command: python main.py service 4100 100
+    command: python main.py service 4100 100 llama3.2
     container_name: service3
     networks:
-      - pasidnet
+      - sdnet
     ports:
       - "4100:4100"
     depends_on:
       - ollama
+    volumes:
+      - ./logs:/app/logs
 
   service4:
     build: .
-    command: python main.py service 4101 100
+    command: python main.py service 4101 100 llama3.2
     container_name: service4
     networks:
-      - pasidnet
+      - sdnet
     ports:
       - "4101:4101"
     depends_on:
       - ollama
+    volumes:
+      - ./logs:/app/logs
 
 networks:
-  pasidnet:
+  sdnet:
     driver: bridge
 
 volumes:

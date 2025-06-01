@@ -3,6 +3,7 @@ import datetime
 import time
 from typing import List, Dict, Any, Optional, Tuple
 from src.abstract_proxy import AbstractProxy
+from src.utils import Utils
 
 
 class Source(AbstractProxy):
@@ -49,14 +50,7 @@ class Source(AbstractProxy):
         if not self.enderecos_lb and not self.etapa_alimentacao_modelo:
             self.log("ALERTA: Nenhum endereço de LB configurado para validação.")
 
-    def obter_timestamp_atual() -> float:
-        """
-        Obtém o timestamp atual em milissegundos com alta precisão.
-        
-        Returns:
-            float: Timestamp atual em milissegundos desde a época Unix
-        """
-        return time.time() * 1000  # Converte segundos para milissegundos
+    
 
     def executar(self) -> None:
         """Inicia o fluxo principal da source."""
@@ -78,7 +72,7 @@ class Source(AbstractProxy):
             return
 
         for i in range(self.max_mensagens_esperadas):
-            msg = f"ALIMENTACAO;{self.contador_mensagem_atual};{obter_timestamp_atual()};Payload_alimentacao_{i}"
+            msg = f"ALIMENTACAO;{self.contador_mensagem_atual};{Utils.obter_timestamp_atual()};Payload_alimentacao_{i}"
             self.log(f"Enviando mensagem: {msg} para {self.ip_destino}:{self.porta_destino}")
             
             resposta = self.enviar_e_receber(self.ip_destino, self.porta_destino, msg, eh_alimentacao=True)
@@ -125,7 +119,7 @@ class Source(AbstractProxy):
             for i in range(self.max_mensagens_esperadas):
                 lb_ip, lb_porta = self.enderecos_lb[i % num_lbs]
                 payload = f"Dados_msg_{self.contador_mensagem_atual}_ciclo_{ciclo_idx}"
-                msg = f"{ciclo_idx};{self.contador_mensagem_atual};{obter_timestamp_atual()};{payload}"
+                msg = f"{ciclo_idx};{self.contador_mensagem_atual};{Utils.obter_timestamp_atual()};{payload}"
                 
                 self.log(f"Enviando para LB {lb_ip}:{lb_porta}: {msg}")
                 self.enviar_e_receber(lb_ip, lb_porta, msg, info_ciclo=ciclo_idx)

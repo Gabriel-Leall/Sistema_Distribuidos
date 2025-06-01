@@ -6,10 +6,10 @@ from src.abstract_proxy import AbstractProxy
 from src.service_ia import IA
 
 class ServiceProxy(AbstractProxy):
-    def __init__(self, porta_escuta: int, tempo_servico_ms: float, tamanho_max_fila: int = 10):
+    def __init__(self, porta_escuta: int, tempo_service_ms: float, tamanho_max_fila: int = 10):
         super().__init__()  
         self.porta_escuta = porta_escuta
-        self.tempo_servico_ms = tempo_servico_ms
+        self.tempo_servico_ms = tempo_service_ms
         self.fila = Queue(maxsize=tamanho_max_fila) 
         self.tamanho_max_fila = tamanho_max_fila
         self.servico_ia = IA()

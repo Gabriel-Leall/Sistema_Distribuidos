@@ -3,7 +3,6 @@ services:
   ollama:
     image: ollama/ollama
     container_name: ollama
-    entrypoint: "" 
     command: >
       sh -c "ollama serve & sleep 5 && ollama pull llama3.2 && tail -f /dev/null"
     ports:
@@ -12,8 +11,7 @@ services:
       - ollama:/root/.ollama
     networks:
       - sdnet
-    
-    
+
   source:
     build: .
     command: python main.py source
@@ -24,7 +22,7 @@ services:
     networks:
       - sdnet
     volumes:
-      - ./logs:/app/logs
+      - ./logs/source:/app/logs
 
   loadbalance1:
     build: .
@@ -38,7 +36,7 @@ services:
     networks:
       - sdnet
     volumes:
-      - ./logs:/app/logs
+      - ./logs/loadbalance1:/app/logs
 
   loadbalance2:
     build: .
@@ -52,7 +50,7 @@ services:
     networks:
       - sdnet
     volumes:
-      - ./logs:/app/logs
+      - ./logs/loadbalance2:/app/logs
 
   service1:
     build: .
@@ -65,7 +63,7 @@ services:
     depends_on:
       - ollama
     volumes:
-      - ./logs:/app/logs
+      - ./logs/service1:/app/logs
 
   service2:
     build: .
@@ -78,7 +76,7 @@ services:
     depends_on:
       - ollama
     volumes:
-      - ./logs:/app/logs
+      - ./logs/service2:/app/logs
 
   service3:
     build: .
@@ -91,7 +89,7 @@ services:
     depends_on:
       - ollama
     volumes:
-      - ./logs:/app/logs
+      - ./logs/service3:/app/logs
 
   service4:
     build: .
@@ -104,11 +102,11 @@ services:
     depends_on:
       - ollama
     volumes:
-      - ./logs:/app/logs
+      - ./logs/service4:/app/logs
 
 networks:
   sdnet:
     driver: bridge
 
 volumes:
-  ollama: 
+  ollama:

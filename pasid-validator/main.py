@@ -114,7 +114,7 @@ def configuracao() -> Dict[str, Any]:
         'max_considered_messages_expected': 10, 
         'arrival_delay': 100,
         'qtd_services': [1, 2], 
-        'loadbalancer_addresses': 'loadbalance1:2000,loadbalance2:3000' 
+        'enderecos_load_balancers': 'loadbalance1:2000,loadbalance2:3000' 
     }
 
 if __name__ == "__main__":

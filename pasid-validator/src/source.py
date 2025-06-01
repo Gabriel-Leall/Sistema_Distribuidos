@@ -5,7 +5,7 @@ from typing import List, Dict, Any, Optional, Tuple
 from src.abstract_proxy import AbstractProxy
 from src.utils import Utils
 import json
-
+from src.graficos import gerar_grafico_mrt_por_taxa_geracao
 
 class Source(AbstractProxy):
     def __init__(self, config: Dict[str, Any]) -> None:
@@ -66,6 +66,9 @@ class Source(AbstractProxy):
             self.enviar_mensagens_validacao()
         self.salvar_mrts_json()
         self.log("Execução da source concluída.")
+        #gerar_grafico_mrt_por_taxa_geracao("resultados/resultados_mrt.json", modo="num_services")
+        #gerar_grafico_mrt_por_taxa_geracao("resultados/resultados_mrt.json", modo="tipo_servico")
+        self.log("Gráficos gerados.")
 
     def enviar_mensagens_alimentacao(self) -> None:
         """Envia mensagens para alimentar o modelo."""

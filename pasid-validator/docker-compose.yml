@@ -28,7 +28,7 @@ services:
 
   loadbalance1:
     build: .
-    command: python main.py load_balancer 2000 "service1:4001,service2:4002"
+    command: python main.py loadbalance 2000 "service1:4001,service2:4002"
     container_name: loadbalance1
     ports:
       - "2000:2000"
@@ -42,7 +42,7 @@ services:
 
   loadbalance2:
     build: .
-    command: python main.py load_balancer 3000 "service3:4100,service4:4101"
+    command: python main.py loadbalance 3000 "service3:4100,service4:4101"
     container_name: loadbalance2
     ports:
       - "3000:3000"
@@ -111,4 +111,4 @@ networks:
     driver: bridge
 
 volumes:
-  ollama:
+  ollama: 

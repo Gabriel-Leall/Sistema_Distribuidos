@@ -6,28 +6,28 @@ from collections import deque
 from src.abstract_proxy import AbstractProxy
 
 class LoadBalancerProxy(AbstractProxy):
-    def __init__(self, porta_escuta: int, enderecos_servicos: List[Tuple[str, int]]):
+    def __init__(self, porta_escuta: int, enderecos_services: List[Tuple[str, int]]):
         """
-        Inicializa o balanceador de carga.
+        Inicializa o loadbalancer de carga.
         
         Args:
-            porta_escuta: Porta onde o balanceador irá escutar conexões
+            porta_escuta: Porta onde o loadbalancer irá escutar conexões
             enderecos_servicos: Lista de tuplas (ip, porta) dos serviços disponíveis
         """
         super().__init__()
         self.porta_escuta = porta_escuta
-        self.enderecos_servicos = enderecos_servicos
+        self.enderecos_servicos = enderecos_services
         self.indice_atual = 0  # Para algoritmo round-robin
 
     def iniciar(self):
-        """Inicia o balanceador de carga para escutar conexões."""
+        """Inicia o loadbalancer de carga para escutar conexões."""
         servidor = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         servidor.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         
         try:
             servidor.bind(('0.0.0.0', self.porta_escuta))
             servidor.listen()
-            print(f"Balanceador de Carga escutando na porta {self.porta_escuta}")
+            print(f"loadbalancer de Carga escutando na porta {self.porta_escuta}")
             
             while True:
                 socket_cliente, _ = servidor.accept()
@@ -37,7 +37,7 @@ class LoadBalancerProxy(AbstractProxy):
                     daemon=True
                 ).start()
         except Exception as e:
-            print(f"Erro no Balanceador de Carga: {e}")
+            print(f"Erro no loadbalancer de Carga: {e}")
         finally:
             servidor.close()
 

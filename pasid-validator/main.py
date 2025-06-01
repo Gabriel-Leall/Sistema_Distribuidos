@@ -59,10 +59,10 @@ def iniciar_Source(config: Optional[dict] = None) -> None:
     else:
         print("Etapa de validação desabilitada na configuração")
 
-def iniciar_balanceador(porta_escuta: int = 2000, 
+def iniciar_loadbalancer(porta_escuta: int = 2000, 
                        enderecos_services_str: Optional[str] = None) -> None:
     """
-    Inicia um balanceador de carga.
+    Inicia um loadbalancer de carga.
     
     Args:
         porta_escuta: Porta para escutar conexões
@@ -73,12 +73,12 @@ def iniciar_balanceador(porta_escuta: int = 2000,
         if enderecos_services_str:
             enderecos_services = parsear_enderecos_services(enderecos_services_str)
         
-        print(f"\nIniciando Balanceador na porta {porta_escuta}")
+        print(f"\nIniciando loadbalancer na porta {porta_escuta}")
         print(f"Serviços backend: {enderecos_services or 'Nenhum'}")
         
-        balanceador = LoadBalancerProxy(porta_escuta=porta_escuta, 
+        loadbalancer = LoadBalancerProxy(porta_escuta=porta_escuta, 
                                      enderecos_services=enderecos_services)
-        balanceador.iniciar()
+        loadbalancer.iniciar()
     except ValueError as e:
         print(f"ERRO: {e}")
         sys.exit(1)
@@ -111,17 +111,17 @@ if __name__ == "__main__":
 
     try:
         if funcao == "source":
-            iniciar_Source(config=config)
+            iniciar_Source(config=configuracao())
 
         elif funcao == "loadbalance":
             if len(sys.argv) < 4:
-                print("Erro: argumentos insuficientes para balanceador")
+                print("Erro: argumentos insuficientes para loadbalancer")
         
                 sys.exit(1)
                 
             porta = int(sys.argv[2])
             enderecos = sys.argv[3]
-            iniciar_balanceador(porta_escuta=porta, 
+            iniciar_loadbalancer(porta_escuta=porta, 
                               enderecos_services_str=enderecos)
 
         elif funcao == "service":

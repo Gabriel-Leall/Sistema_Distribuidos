@@ -1,37 +1,27 @@
 import json
+import os
 from datetime import datetime
 
+
 class AbstractProxy:
-
-    def __init__(self, log_file="log.json"):
+    def __init__(self, log_file="logs/log_source.json"):
         self.log_file = log_file
-        self.init_log_file()
 
-    def init_log_file(self):
-        # Cria ou limpa o arquivo JSON com uma lista vazia
-        with open(self.log_file, 'w') as f:
-            json.dump([], f, indent=4)
+        # Cria a pasta, se não existir
+        pasta = os.path.dirname(self.log_file)
+        if pasta and not os.path.exists(pasta):
+            os.makedirs(pasta, exist_ok=True)
 
     def log(self, message: str):
-        print(message)  # Continua exibindo no console
+        print(message)
 
-        # Cria o registro com timestamp
         log_entry = {
             "timestamp": datetime.now().isoformat(),
             "message": message
         }
 
-        # Lê os logs atuais
         try:
-            with open(self.log_file, 'r') as f:
-                logs = json.load(f)
-        except (FileNotFoundError, json.JSONDecodeError):
-            logs = []
-
-        # Adiciona o novo log
-        logs.append(log_entry)
-
-        # Salva de volta no arquivo
-        with open(self.log_file, 'w') as f:
-            json.dump(logs, f, indent=4)
-   
+            with open(self.log_file, 'a', encoding='utf-8') as f:
+                f.write(json.dumps(log_entry) + '\n')
+        except Exception as e:
+            print(f"[ERRO_LOG] {e} | Mensagem: {message}")

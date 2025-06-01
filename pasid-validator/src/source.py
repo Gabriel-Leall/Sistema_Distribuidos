@@ -4,6 +4,7 @@ import time
 from typing import List, Dict, Any, Optional, Tuple
 from src.abstract_proxy import AbstractProxy
 from src.utils import Utils
+import json
 
 
 class Source(AbstractProxy):
@@ -14,7 +15,7 @@ class Source(AbstractProxy):
         Args:
             config: Dicionário de configuração com parâmetros necessários
         """
-        super().__init__(config.get("arquivo_log", "log_source.json"))
+        super().__init__()
         self.etapa_alimentacao_modelo: bool = config.get("etapa_alimentacao_modelo", False)
         self.atraso_chegada: int = config.get("atraso_chegada", 0)  # em ms
         self.max_mensagens_esperadas: int = config.get("max_mensagens_esperadas", 10)
@@ -63,6 +64,7 @@ class Source(AbstractProxy):
                 self.log("ERRO: Validação sem LBs configurados. Abortando.")
                 return
             self.enviar_mensagens_validacao()
+        self.salvar_mrts_json()
         self.log("Execução da source concluída.")
 
     def enviar_mensagens_alimentacao(self) -> None:
@@ -88,7 +90,7 @@ class Source(AbstractProxy):
                 time.sleep(self.atraso_chegada / 1000.0)
                 
         self.log("Etapa de alimentação concluída.")
-
+    
     def enviar_mensagens_validacao(self) -> None:
         """Executa ciclos de validação com diferentes quantidades de serviços."""
         self.log("Iniciando etapa de validação")
@@ -135,12 +137,11 @@ class Source(AbstractProxy):
             mrt_medio = self.calcular_media(self.tempos_resposta) if self.tempos_resposta else 0.0
             desvio_padrao = self.calcular_desvio_padrao(self.tempos_resposta) if self.tempos_resposta else 0.0
 
-            self.log(f"=== Ciclo {ciclo_idx} Finalizado ===")
+            self.log(f"----- Ciclo {ciclo_idx} Finalizado -----")
             self.log(f"Mensagens enviadas: {mensagens_enviadas}")
             self.log(f"Respostas válidas: {respostas_validas}")
             self.log(f"MRT médio: {mrt_medio:.2f} ms")
             self.log(f"Desvio padrão: {desvio_padrao:.2f} ms")
-            self.log("="*50)
 
         self.log("Etapa de validação concluída.")
 
@@ -203,6 +204,55 @@ class Source(AbstractProxy):
             self.log(f"ERRO geral com {ip}:{porta}: {str(e)}")
         
         return resposta
+    
+    def salvar_mrts_json(self, nome_arquivo: str = "/resultados/resultados_mrt.json") -> None:
+        resultados = {
+            'total_requests': self.contador_mensagem_atual - 1,
+            'successful_requests': len(self.tempos_resposta),
+            'failed_requests': (self.contador_mensagem_atual - 1) - len(self.tempos_resposta),
+            'total_time': sum(self.tempos_resposta),
+            'requests_per_service': {},
+            'cycles': []
+        }
+
+        if not self.etapa_alimentacao_modelo:
+            # Foi etapa de validação
+            for ciclo_idx, num_servicos in enumerate(self.qtd_servicos):
+                respostas_ciclo = self.tempos_resposta[
+                    ciclo_idx * self.max_mensagens_esperadas:
+                    (ciclo_idx + 1) * self.max_mensagens_esperadas
+                ]
+
+                mrt_medio = self.calcular_media(respostas_ciclo) if respostas_ciclo else 0.0
+                desvio = self.calcular_desvio_padrao(respostas_ciclo) if respostas_ciclo else 0.0
+
+                resultados['cycles'].append({
+                    'cycle_index': ciclo_idx,
+                    'num_services': num_servicos,
+                    'messages_sent': self.max_mensagens_esperadas,
+                    'valid_responses': len(respostas_ciclo),
+                    'mrt_media_ms': mrt_medio,
+                    'desvio_padrao_ms': desvio,
+                    'tempos_ms': respostas_ciclo  # <- tempos individuais
+                })
+        else:
+            # Foi etapa de alimentação
+            resultados['cycles'].append({
+                'cycle_index': 0,
+                'alimentacao': True,
+                'messages_sent': self.max_mensagens_esperadas,
+                'valid_responses': len(self.tempos_resposta),
+                'tempos_ms': self.tempos_resposta  # <- tempos individuais
+            })
+
+        # Salva no arquivo JSON
+        with open(nome_arquivo, 'w', encoding='utf-8') as f:
+            json.dump(resultados, f, indent=4)
+
+        print(f"\nResultados salvos em {nome_arquivo}")
+
+
+
 
     @staticmethod
     def calcular_media(valores: List[float]) -> float:

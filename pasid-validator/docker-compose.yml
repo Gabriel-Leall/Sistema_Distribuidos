@@ -1,5 +1,6 @@
-services:
+version: '3.9'
 
+services:
   ollama:
     image: ollama/ollama
     container_name: ollama
@@ -19,10 +20,11 @@ services:
     depends_on:
       - loadbalance1
       - loadbalance2
+    volumes:
+      - ./resultados:/resultados
     networks:
       - sdnet
-    volumes:
-      - ./logs/source:/app/logs
+    
 
   loadbalance1:
     build: .
@@ -35,8 +37,7 @@ services:
       - service2
     networks:
       - sdnet
-    volumes:
-      - ./logs/loadbalance1:/app/logs
+
 
   loadbalance2:
     build: .
@@ -49,8 +50,7 @@ services:
       - service4
     networks:
       - sdnet
-    volumes:
-      - ./logs/loadbalance2:/app/logs
+    
 
   service1:
     build: .
@@ -62,8 +62,7 @@ services:
       - "4001:4001"
     depends_on:
       - ollama
-    volumes:
-      - ./logs/service1:/app/logs
+    
 
   service2:
     build: .
@@ -75,8 +74,7 @@ services:
       - "4002:4002"
     depends_on:
       - ollama
-    volumes:
-      - ./logs/service2:/app/logs
+    
 
   service3:
     build: .
@@ -88,8 +86,7 @@ services:
       - "4100:4100"
     depends_on:
       - ollama
-    volumes:
-      - ./logs/service3:/app/logs
+    
 
   service4:
     build: .
@@ -101,8 +98,7 @@ services:
       - "4101:4101"
     depends_on:
       - ollama
-    volumes:
-      - ./logs/service4:/app/logs
+    
 
 networks:
   sdnet:

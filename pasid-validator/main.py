@@ -85,35 +85,35 @@ def iniciar_balanceador(porta_escuta: int = 2000,
 
 def iniciar_service(porta: int, 
                    tempo_service_ms: float, 
-                   nome_modelo: str) -> None:
+                   modelo_ai: str) -> None:
     """
     Inicia uma instância de serviço.
     
     Args:
         porta: Porta para escutar conexões
         tempo_service_ms: Tempo simulado de serviço (ms)
-        nome_modelo: Nome do modelo IA a ser usado
+        modelo_ai: Nome do modelo IA a ser usado
     """
     print(f"\nIniciando Serviço na porta {porta}")
-    print(f"Modelo: {nome_modelo} | Tempo serviço: {tempo_service_ms}ms")
+    print(f"Modelo: {modelo_ai} | Tempo serviço: {tempo_service_ms}ms")
     
     service = ServiceProxy(porta_escuta=porta,
                      tempo_service_ms=tempo_service_ms,
-                     nome_modelo=nome_modelo)
+                     modelo_ai=modelo_ai)
     service.iniciar()
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         sys.exit(1)
 
-    papel = sys.argv[1].lower()
+    funcao = sys.argv[1].lower()
     config = configuracao()
 
     try:
-        if papel == "souce":
+        if funcao == "source":
             iniciar_Source(config=config)
 
-        elif papel == "lb":
+        elif funcao == "loadbalance":
             if len(sys.argv) < 4:
                 print("Erro: argumentos insuficientes para balanceador")
         
@@ -124,7 +124,7 @@ if __name__ == "__main__":
             iniciar_balanceador(porta_escuta=porta, 
                               enderecos_services_str=enderecos)
 
-        elif papel == "service":
+        elif funcao == "service":
             if len(sys.argv) < 5:
                 print("Erro: argumentos insuficientes para serviço")
                 sys.exit(1)
@@ -134,10 +134,10 @@ if __name__ == "__main__":
             modelo = sys.argv[4]
             iniciar_service(porta=porta,
                           tempo_service_ms=tempo_service,
-                          nome_modelo=modelo)
+                          modelo_ai=modelo)
 
         else:
-            print(f"Função desconhecida: {papel}")
+            print(f"Função desconhecida: {funcao}")
             sys.exit(1)
 
     except ValueError as e:

@@ -121,9 +121,3 @@ class LoadBalancerProxy(AbstractProxy):
         """Adiciona timestamp à resposta do serviço."""
         tempo_atual = int(time.time() * 1000)
         return f"{resposta};envio:{tempo_atual};"
-
-if __name__ == "__main__":
-    # Exemplo de uso
-    servicos = [("localhost", 4001), ("localhost", 4002)]
-    balanceador = LoadBalancerProxy(porta_escuta=2000, enderecos_servicos=servicos)
-    balanceador.iniciar()

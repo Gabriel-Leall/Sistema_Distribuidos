@@ -34,12 +34,6 @@ class Utils:
 
     @staticmethod
     def obter_timestamp_atual() -> float:
-        """
-        Obtém o timestamp atual em milissegundos com alta precisão.
-        
-        Returns:
-            float: Timestamp atual em milissegundos desde a época Unix
-        """
-        return time.time() * 1000  # Converte segundos para milissegundos
+        return time.time()  
     
     

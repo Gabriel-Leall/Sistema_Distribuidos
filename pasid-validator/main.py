@@ -109,7 +109,7 @@ def configuracao() -> Dict[str, Any]:
         'source_port': 1000,
         'target_ip': 'loadbalance1', 
         'target_port': 2000,         
-        'max_considered_messages_expected': 10, 
+        'max_considered_messages_expected': 30, 
         'arrival_delay': 100,
         'qtd_servicos': [1, 2, 3], 
         'enderecos_load_balancers': 'loadbalance1:2000,loadbalance2:3000' 

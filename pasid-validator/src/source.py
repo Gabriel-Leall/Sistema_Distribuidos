@@ -5,7 +5,6 @@ from typing import List, Dict, Any, Optional, Tuple
 from src.abstract_proxy import AbstractProxy
 from src.utils import Utils
 import json
-from src.graficos import gerar_graficos_mrt
 import os
 import matplotlib.pyplot as plt
 import numpy as np
@@ -20,7 +19,7 @@ class Source(AbstractProxy):
         super().__init__()
         self.etapa_alimentacao_modelo: bool = config.get("etapa_alimentacao_modelo", False)
         self.atraso_chegada: int = config.get("atraso_chegada", 0)  # em ms
-        self.max_mensagens_esperadas: int = config.get("max_mensagens_esperadas", 10)
+        self.max_mensagens_esperadas: int = config.get("max_mensagens_esperadas", 30)
         self.contador_mensagem_atual: int = 0
         self.qtd_servicos: List[int] = config.get("qtd_servicos", [])  # Ex: [1, 2] N de serviços por LB
 
@@ -209,42 +208,44 @@ class Source(AbstractProxy):
 
     def salvar_mrts_json(self, nome_arquivo: str = "../resultados/resultados_mrt.json") -> None:
         resultados = {
-            'total_requests': self.contador_mensagem_atual - 1,
+            'total_requests': len(self.tempos_resposta),
             'successful_requests': len(self.tempos_resposta),
-            'failed_requests': (self.contador_mensagem_atual - 1) - len(self.tempos_resposta),
+            'failed_requests': 0,
             'total_time': sum(self.tempos_resposta),
             'requests_per_service': {},
             'cycles': []
         }
 
-        if not self.etapa_alimentacao_modelo:
-            for ciclo_idx, num_servicos in enumerate(self.qtd_servicos):
-                respostas_ciclo = self.tempos_resposta[
-                    ciclo_idx * self.max_mensagens_esperadas:
-                    (ciclo_idx + 1) * self.max_mensagens_esperadas
-                ]
+        # Se você sabe quantas mensagens cada ciclo enviou, use isso para separar:
+        mensagens_por_ciclo = [10, 10, 10]  # Exemplo: 3 ciclos, 10 mensagens cada
 
-                mrt_medio = self.calcular_media(respostas_ciclo) if respostas_ciclo else 0.0
-                desvio = self.calcular_desvio_padrao(respostas_ciclo) if respostas_ciclo else 0.0
+        # Verifica se o número de tempos bate com o esperado
+        total_esperado = sum(mensagens_por_ciclo)
+        if len(self.tempos_resposta) != total_esperado:
+            print(f"⚠️ Aviso: Número de tempos ({len(self.tempos_resposta)}) não corresponde ao esperado ({total_esperado})")
 
-                resultados['cycles'].append({
-                    'cycle_index': ciclo_idx,
-                    'num_services': num_servicos,
-                    'messages_sent': self.max_mensagens_esperadas,
-                    'valid_responses': len(respostas_ciclo),
-                    'mrt_media_ms': mrt_medio,
-                    'desvio_padrao_ms': desvio,
-                    'tempos_ms': respostas_ciclo
-                })
-        else:
+        # Divide os tempos por ciclo
+        tempos_por_ciclo = []
+        inicio = 0
+        for num_mensagens in mensagens_por_ciclo:
+            fim = inicio + num_mensagens
+            tempos_ciclo = self.tempos_resposta[inicio:fim]
+            tempos_por_ciclo.append(tempos_ciclo)
+            inicio = fim
+
+        # Preenche os ciclos no JSON
+        for ciclo_idx, (num_servicos, tempos_ciclo) in enumerate(zip(self.qtd_servicos, tempos_por_ciclo)):
             resultados['cycles'].append({
-                'cycle_index': 0,
-                'alimentacao': True,
-                'messages_sent': self.max_mensagens_esperadas,
-                'valid_responses': len(self.tempos_resposta),
-                'tempos_ms': self.tempos_resposta
+                'cycle_index': ciclo_idx,
+                'num_services': num_servicos,
+                'messages_sent': len(tempos_ciclo),  # Pode ser menor que o esperado se houver falhas
+                'valid_responses': len(tempos_ciclo),
+                'mrt_media_ms': self.calcular_media(tempos_ciclo) if tempos_ciclo else 0.0,
+                'desvio_padrao_ms': self.calcular_desvio_padrao(tempos_ciclo) if tempos_ciclo else 0.0,
+                'tempos_ms': tempos_ciclo
             })
 
+  
         # Garante que o diretório existe
         import os
         os.makedirs(os.path.dirname(nome_arquivo), exist_ok=True)
@@ -254,10 +255,7 @@ class Source(AbstractProxy):
             json.dump(resultados, f, indent=4)
 
         print(f"\nResultados salvos em {nome_arquivo}")
-        
-        # Chama a função de gráficos passando o arquivo correto
         self.gerar_graficos_mrt(nome_arquivo)
-        self.log("Passou pelos graficos")
 
 
     def gerar_graficos_mrt(self, nome_arquivo: str):

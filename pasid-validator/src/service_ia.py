@@ -1,14 +1,12 @@
-from transformers import pipeline
+import markovify
 
 class IA:
-    def __init__(self, modelo_ai: str = "distilbert"):
+    def __init__(self, modelo_ai: str = "markov"):
         """
-        Inicializa o pipeline de IA local
+        Inicializa um gerador de texto simples baseado em Markov
         """
         self.available_models = {
-            "distilbert": "distilbert-base-uncased",
-            "tiny-llama": "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
-            "mistral": "mistralai/Mistral-7B-Instruct-v0.1",
+            "markov": "default"
         }
 
         self.set_model(modelo_ai)
@@ -16,16 +14,25 @@ class IA:
     def set_model(self, modelo_ai: str):
         if modelo_ai not in self.available_models:
             raise ValueError(f"Modelo não suportado. Escolha entre {list(self.available_models.keys())}")
-        model_name = self.available_models[modelo_ai]
-
+        
+        # Exemplo de corpus simples para treinar
+        corpus = """
+        O rato roeu a roupa do rei de Roma. 
+        A aranha arranha a rã. 
+        A Rita levou a marmita. 
+        O tempo perguntou pro tempo quanto tempo o tempo tem.
+        """
         try:
-            self.pipe = pipeline("text-generation", model=model_name)
+            self.model = markovify.Text(corpus)
         except Exception as e:
-            print(f"Erro ao carregar modelo: {e}")
-            self.pipe = None
+            print(f"Erro ao inicializar modelo Markov: {e}")
+            self.model = None
 
     def process(self, prompt: str) -> str:
-        if self.pipe is None:
+        if self.model is None:
             return "Modelo não carregado."
-        result = self.pipe(prompt, max_length=100, do_sample=True)[0]["generated_text"]
-        return result
+        return self.model.make_sentence() or "Não consegui gerar uma resposta."
+
+# Exemplo de uso:
+# ia = IA()
+# print(ia.process("teste"))

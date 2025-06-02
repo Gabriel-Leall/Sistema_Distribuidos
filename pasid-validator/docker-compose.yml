@@ -39,7 +39,7 @@ services:
 
   service1:
     build: .
-    command: python main.py service 4001 100 distilbert
+    command: python main.py service 4001 100 markov
     container_name: service1
     networks:
       - sdnet
@@ -48,7 +48,7 @@ services:
 
   service2:
     build: .
-    command: python main.py service 4002 100 distilbert
+    command: python main.py service 4002 100 markov
     container_name: service2
     networks:
       - sdnet
@@ -57,7 +57,7 @@ services:
 
   service3:
     build: .
-    command: python main.py service 4100 100 distilbert
+    command: python main.py service 4100 100 markov
     container_name: service3
     networks:
       - sdnet
@@ -66,7 +66,7 @@ services:
 
   service4:
     build: .
-    command: python main.py service 4101 100 distilbert
+    command: python main.py service 4101 100 markov
     container_name: service4
     networks:
       - sdnet

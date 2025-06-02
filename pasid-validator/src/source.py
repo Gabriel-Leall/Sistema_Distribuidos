@@ -19,9 +19,11 @@ class Source(AbstractProxy):
         super().__init__()
         self.etapa_alimentacao_modelo: bool = config.get("etapa_alimentacao_modelo", False)
         self.atraso_chegada: int = config.get("atraso_chegada", 0)  # em ms
-        self.max_mensagens_esperadas: int = config.get("max_mensagens_esperadas", 90)
+        self.max_mensagens_esperadas: int = config.get("max_mensagens_esperadas", 30)
         self.contador_mensagem_atual: int = 0
         self.qtd_servicos: List[int] = config.get("qtd_servicos", [])  # Ex: [1, 2] N de serviços por LB
+        self.tempos_resposta: List[float] = []  # MRTs
+        self.tempos_conexao: List[float] = []   # Tempo de conexão TCP
 
         enderecos_lb_str = config.get("enderecos_load_balancers", "")
 
@@ -147,30 +149,25 @@ class Source(AbstractProxy):
         self.log("Etapa de validação concluída.")
 
     def enviar_e_receber(self, ip: str, porta: int, mensagem: str, 
-                        eh_config: bool = False, 
-                        eh_alimentacao: bool = False,
-                        info_ciclo: Optional[int] = None) -> Optional[str]:
-        """
-        Método unificado para envio e recebimento com tratamento de erros.
-        
-        Args:
-            ip: IP de destino
-            porta: Porta de destino
-            mensagem: Conteúdo a ser enviado
-            eh_config: Se é mensagem de configuração
-            eh_alimentacao: Se é mensagem de alimentação
-            info_ciclo: Número do ciclo atual (para logs)
-            
-        Returns:
-            Resposta recebida ou None em caso de erro
-        """
+                      eh_config: bool = False, 
+                      eh_alimentacao: bool = False,
+                      info_ciclo: Optional[int] = None) -> Optional[str]:
         resposta = None
         try:
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 s.settimeout(10.0)
-                s.connect((ip, porta))
                 
-                # Extrai timestamp de envio se aplicável
+                # ⏱️ Medir tempo de conexão
+                inicio_conexao = time.time()
+                s.connect((ip, porta))
+                fim_conexao = time.time()
+                
+                tempo_conexao_ms = (fim_conexao - inicio_conexao) * 1000.0
+                self.tempos_conexao.append(tempo_conexao_ms)
+
+                self.log(f"Tempo de conexão com {ip}:{porta} = {tempo_conexao_ms:.2f} ms")
+                
+                # Timestamp de envio
                 timestamp_envio = 0.0
                 if not eh_config:
                     partes = mensagem.split(";")
@@ -184,12 +181,12 @@ class Source(AbstractProxy):
                 dados_recebidos = s.recv(2048)
                 resposta = dados_recebidos.decode()
 
-                # Processa resposta conforme tipo de mensagem
+                # Processamento das respostas
                 if eh_config:
                     self.log(f"Resposta de configuração: {resposta}")
                 elif eh_alimentacao:
                     self.log(f"Resposta de alimentação: {resposta}")
-                else:  # Mensagem de validação
+                else:
                     tempo_recebimento = time.time()
                     if timestamp_envio > 0:
                         mrt_ms = (tempo_recebimento - timestamp_envio) * 1000.0
@@ -206,46 +203,60 @@ class Source(AbstractProxy):
         
         return resposta
 
+
     def salvar_mrts_json(self, nome_arquivo: str = "../resultados/resultados_mrt.json") -> None:
         resultados = {
             'total_requests': len(self.tempos_resposta),
             'successful_requests': len(self.tempos_resposta),
             'failed_requests': 0,
-            'total_time': sum(self.tempos_resposta),
+            'total_mrt_time': sum(self.tempos_resposta),
+            'total_connection_time': sum(self.tempos_conexao),
             'requests_per_service': {},
             'cycles': []
         }
 
-        # Se você sabe quantas mensagens cada ciclo enviou, use isso para separar:
-        mensagens_por_ciclo = [30, 30, 30]  # Exemplo: 3 ciclos, 10 mensagens cada
+        mensagens_por_ciclo = [10, 10, 10]  # Ajuste conforme sua configuração
 
-        # Verifica se o número de tempos bate com o esperado
         total_esperado = sum(mensagens_por_ciclo)
         if len(self.tempos_resposta) != total_esperado:
-            print(f"⚠️ Aviso: Número de tempos ({len(self.tempos_resposta)}) não corresponde ao esperado ({total_esperado})")
+            print(f"⚠️ Aviso: Número de tempos de resposta ({len(self.tempos_resposta)}) não corresponde ao esperado ({total_esperado})")
+        if len(self.tempos_conexao) != total_esperado:
+            print(f"⚠️ Aviso: Número de tempos de conexão ({len(self.tempos_conexao)}) não corresponde ao esperado ({total_esperado})")
 
         # Divide os tempos por ciclo
-        tempos_por_ciclo = []
+        tempos_resposta_por_ciclo = []
+        tempos_conexao_por_ciclo = []
+
         inicio = 0
         for num_mensagens in mensagens_por_ciclo:
             fim = inicio + num_mensagens
-            tempos_ciclo = self.tempos_resposta[inicio:fim]
-            tempos_por_ciclo.append(tempos_ciclo)
+            tempos_resposta_ciclo = self.tempos_resposta[inicio:fim]
+            tempos_conexao_ciclo = self.tempos_conexao[inicio:fim]
+            tempos_resposta_por_ciclo.append(tempos_resposta_ciclo)
+            tempos_conexao_por_ciclo.append(tempos_conexao_ciclo)
             inicio = fim
 
         # Preenche os ciclos no JSON
-        for ciclo_idx, (num_servicos, tempos_ciclo) in enumerate(zip(self.qtd_servicos, tempos_por_ciclo)):
+        for ciclo_idx, (num_servicos, tempos_resposta_ciclo, tempos_conexao_ciclo) in enumerate(
+            zip(self.qtd_servicos, tempos_resposta_por_ciclo, tempos_conexao_por_ciclo)):
+
             resultados['cycles'].append({
                 'cycle_index': ciclo_idx,
                 'num_services': num_servicos,
-                'messages_sent': len(tempos_ciclo),  # Pode ser menor que o esperado se houver falhas
-                'valid_responses': len(tempos_ciclo),
-                'mrt_media_ms': self.calcular_media(tempos_ciclo) if tempos_ciclo else 0.0,
-                'desvio_padrao_ms': self.calcular_desvio_padrao(tempos_ciclo) if tempos_ciclo else 0.0,
-                'tempos_ms': tempos_ciclo
+                'messages_sent': len(tempos_resposta_ciclo),
+                'valid_responses': len(tempos_resposta_ciclo),
+                'mrt_media_ms': self.calcular_media(tempos_resposta_ciclo) if tempos_resposta_ciclo else 0.0,
+                'desvio_padrao_mrt_ms': self.calcular_desvio_padrao(tempos_resposta_ciclo) if tempos_resposta_ciclo else 0.0,
+                'connection_media_ms': self.calcular_media(tempos_conexao_ciclo) if tempos_conexao_ciclo else 0.0,
+                'desvio_padrao_conexao_ms': self.calcular_desvio_padrao(tempos_conexao_ciclo) if tempos_conexao_ciclo else 0.0,
+                'tempos_mrt_ms': tempos_resposta_ciclo,
+                'tempos_conexao_ms': tempos_conexao_ciclo
             })
 
-  
+        # Inclui todos os tempos brutos no topo do JSON
+        resultados['all_tempos_mrt_ms'] = self.tempos_resposta
+        resultados['all_tempos_conexao_ms'] = self.tempos_conexao
+
         # Garante que o diretório existe
         import os
         os.makedirs(os.path.dirname(nome_arquivo), exist_ok=True)
@@ -259,23 +270,16 @@ class Source(AbstractProxy):
 
 
     def gerar_graficos_mrt(self, nome_arquivo: str):
-        self.log(f"Entrou aqui!!!!!!")
         """Gera gráficos a partir do JSON e salva no mesmo diretório"""
         try:
-            self.log(f"Entrou aqui")
             import matplotlib
-            matplotlib.use('Agg')  # Força o backend 'Agg' que funciona em containers sem display
+            matplotlib.use('Agg')
             import matplotlib.pyplot as plt
             import os
             import json
 
             # Obtém o diretório do arquivo JSON
             output_dir = os.path.dirname(nome_arquivo)
-
-            # Verifica se o diretório existe
-            if not os.path.exists(output_dir):
-                os.makedirs(output_dir, exist_ok=True)
-                self.log(f"Diretório {output_dir} criado")
 
             with open(nome_arquivo, 'r', encoding='utf-8') as f:
                 dados = json.load(f)
@@ -284,30 +288,70 @@ class Source(AbstractProxy):
                 self.log("Nenhum dado para gerar gráficos")
                 return
 
-            # Gráfico - MRT por serviço (linhas e pontos)
+            # Criando o gráfico
             plt.figure(figsize=(10, 6))
+            
+            # Configurações visuais
+            colors = ['b', 'g', 'r']  # Azul, Verde, Vermelho para os 3 serviços
+            marker_style = 'o'         # Usando apenas círculo como marcador
+            
+            # Encontrar os valores mínimos e máximos de tempo de conexão em todos os serviços
+            all_conexao = []
             for ciclo in dados['cycles']:
-                if not ciclo.get('alimentacao', False):
-                    plt.plot(
-                        list(range(len(ciclo['tempos_ms']))),
-                        ciclo['tempos_ms'],
-                        marker='o',
-                        label=f"{ciclo['num_services']} serviço(s)"
-                    )
+                all_conexao.extend(ciclo['tempos_conexao_ms'])
+            
+            if not all_conexao:
+                self.log("Nenhum dado de tempo de conexão encontrado")
+                return
+                
+            min_conexao = min(all_conexao)
+            max_conexao = max(all_conexao)
+            
+            # Margem de 5% para melhor visualização
+            margin = (max_conexao - min_conexao) * 0.05
+            x_min = max(0, min_conexao - margin)  # Não permitir valores negativos
+            x_max = max_conexao + margin
 
-            plt.title("Tempos de Resposta por Serviço")
-            plt.xlabel("Requisição")
-            plt.ylabel("MRT (ms)")
+            for ciclo_idx, ciclo in enumerate(dados['cycles']):
+                # Verificando se temos dados para este ciclo
+                if not ciclo['tempos_conexao_ms'] or not ciclo['tempos_mrt_ms']:
+                    continue
+                    
+                # Ordenando os pontos pelo tempo de conexão
+                dados_ordenados = sorted(zip(ciclo['tempos_conexao_ms'], ciclo['tempos_mrt_ms']))
+                x = [d[0] for d in dados_ordenados]
+                y = [d[1] for d in dados_ordenados]
+                
+                # Plotando com linha e pontos (círculos)
+                plt.plot(
+                    x, y,
+                    color=colors[ciclo_idx % len(colors)],
+                    marker=marker_style,
+                    linestyle='-',
+                    markersize=6,
+                    linewidth=1.5,
+                    label=f'Serviço {ciclo_idx + 1}'
+                )
+
+            plt.title("Tempo de Resposta (MRT) vs Tempo de Conexão")
+            plt.xlabel("Taxa de Geração de Mensagens (mensagens/ms)")
+            plt.ylabel("Tempo de Resposta (MRT) (ms)")
+            plt.grid(True, linestyle='--', alpha=0.7)
             plt.legend()
-            plt.grid(True)
-
-            graph1_path = os.path.join(output_dir, "mrt_por_servico.png")
-            plt.savefig(graph1_path)
+            
+            # Ajustando limites dos eixos
+            plt.xlim(x_min, x_max)
+            plt.ylim(bottom=0)  # Tempo de resposta não pode ser negativo
+            
+            # Salvando o gráfico
+            output_path = os.path.join(output_dir, "mrt_vs_tempo_conexao.png")
+            plt.savefig(output_path, dpi=300, bbox_inches='tight')
             plt.close()
-            self.log(f"Gráfico 1 salvo em {graph1_path}")
+            self.log(f"Gráfico salvo em {output_path}")
 
         except Exception as e:
-            self.log(f"Falha ao gerar gráficos: {str(e)}")
+            self.log(f"Erro ao gerar gráficos: {str(e)}")
+            raise
 
     @staticmethod
     def calcular_media(valores: List[float]) -> float:

@@ -19,7 +19,7 @@ class Source(AbstractProxy):
         super().__init__()
         self.etapa_alimentacao_modelo: bool = config.get("etapa_alimentacao_modelo", False)
         self.atraso_chegada: int = config.get("atraso_chegada", 0)  # em ms
-        self.max_mensagens_esperadas: int = config.get("max_mensagens_esperadas", 30)
+        self.max_mensagens_esperadas: int = config.get("max_mensagens_esperadas", 90)
         self.contador_mensagem_atual: int = 0
         self.qtd_servicos: List[int] = config.get("qtd_servicos", [])  # Ex: [1, 2] N de serviços por LB
 
@@ -217,7 +217,7 @@ class Source(AbstractProxy):
         }
 
         # Se você sabe quantas mensagens cada ciclo enviou, use isso para separar:
-        mensagens_por_ciclo = [10, 10, 10]  # Exemplo: 3 ciclos, 10 mensagens cada
+        mensagens_por_ciclo = [30, 30, 30]  # Exemplo: 3 ciclos, 10 mensagens cada
 
         # Verifica se o número de tempos bate com o esperado
         total_esperado = sum(mensagens_por_ciclo)
@@ -264,12 +264,14 @@ class Source(AbstractProxy):
         try:
             self.log(f"Entrou aqui")
             import matplotlib
-            # Força o backend 'Agg' que funciona em containers sem display
-            matplotlib.use('Agg')
+            matplotlib.use('Agg')  # Força o backend 'Agg' que funciona em containers sem display
+            import matplotlib.pyplot as plt
+            import os
+            import json
 
             # Obtém o diretório do arquivo JSON
             output_dir = os.path.dirname(nome_arquivo)
-            
+
             # Verifica se o diretório existe
             if not os.path.exists(output_dir):
                 os.makedirs(output_dir, exist_ok=True)
@@ -282,42 +284,27 @@ class Source(AbstractProxy):
                 self.log("Nenhum dado para gerar gráficos")
                 return
 
-            # Gráfico 1 - MRT por serviço
+            # Gráfico - MRT por serviço (linhas e pontos)
             plt.figure(figsize=(10, 6))
             for ciclo in dados['cycles']:
                 if not ciclo.get('alimentacao', False):
-                    plt.plot(ciclo['tempos_ms'], 
-                            label=f"{ciclo['num_services']} serviço(s)")
-            
+                    plt.plot(
+                        list(range(len(ciclo['tempos_ms']))),
+                        ciclo['tempos_ms'],
+                        marker='o',
+                        label=f"{ciclo['num_services']} serviço(s)"
+                    )
+
             plt.title("Tempos de Resposta por Serviço")
             plt.xlabel("Requisição")
             plt.ylabel("MRT (ms)")
             plt.legend()
             plt.grid(True)
-            
+
             graph1_path = os.path.join(output_dir, "mrt_por_servico.png")
             plt.savefig(graph1_path)
             plt.close()
             self.log(f"Gráfico 1 salvo em {graph1_path}")
-
-            # Gráfico 2 - Evolução temporal
-            plt.figure(figsize=(12, 6))
-            for ciclo in dados['cycles']:
-                if not ciclo.get('alimentacao', False):
-                    mrt_medio = ciclo['mrt_media_ms']
-                    plt.scatter(ciclo['cycle_index'], mrt_medio,
-                            label=f"{ciclo['num_services']} serviço(s)")
-            
-            plt.title("MRT Médio por Ciclo")
-            plt.xlabel("Ciclo")
-            plt.ylabel("MRT Médio (ms)")
-            plt.legend()
-            plt.grid(True)
-            
-            graph2_path = os.path.join(output_dir, "mrt_evolucao.png")
-            plt.savefig(graph2_path)
-            plt.close()
-            self.log(f"Gráfico 2 salvo em {graph2_path}")
 
         except Exception as e:
             self.log(f"Falha ao gerar gráficos: {str(e)}")

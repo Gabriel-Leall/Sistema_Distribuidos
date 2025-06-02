@@ -1,65 +1,31 @@
-from ollama import Client
-
+from transformers import pipeline
 
 class IA:
-    def __init__(self, modelo_ai: str = "llama3.2"):
+    def __init__(self, modelo_ai: str = "distilbert"):
         """
-        Inicializa o serviço de IA com os modelos disponíveis
-        
-        Args:
-            modelo_ai: Nome do modelo a ser usado (default: "llama3.2")
+        Inicializa o pipeline de IA local
         """
         self.available_models = {
-            "llama3.2": "llama3.2",
-            "deep-seek": "DeepSeek-R1"
+            "distilbert": "distilbert-base-uncased",
+            "tiny-llama": "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+            "mistral": "mistralai/Mistral-7B-Instruct-v0.1",
         }
 
         self.set_model(modelo_ai)
-        self.client = Client(host="http://ollama:11434")
 
-    def set_model(self, modelo_ai: str) -> None:
-        """Define o modelo a ser usado"""
+    def set_model(self, modelo_ai: str):
         if modelo_ai not in self.available_models:
-            raise ValueError(f"Modelo não disponível. Opções: {list(self.available_models.keys())}")
-        self.model = self.available_models[modelo_ai]
+            raise ValueError(f"Modelo não suportado. Escolha entre {list(self.available_models.keys())}")
+        model_name = self.available_models[modelo_ai]
 
-    def ask_ollama(self, prompt: str) -> str:
-        """
-        Envia prompt para o modelo via Ollama
-        
-        Args:
-            prompt: Texto de entrada para o modelo
-            
-        Returns:
-            Resposta do modelo
-        """
         try:
-            response = self.client.chat(
-                model=self.model,
-                messages=[{"role": "user", "content": prompt}]
-            )
-            return response['message']['content']
+            self.pipe = pipeline("text-generation", model=model_name)
         except Exception as e:
-            print(f"Erro ao consultar Ollama: {str(e)}")
-            return "Erro ao processar a requisição"
+            print(f"Erro ao carregar modelo: {e}")
+            self.pipe = None
 
     def process(self, prompt: str) -> str:
-        """
-        Método principal para processamento de texto
-        
-        Args:
-            prompt: Texto de entrada
-            
-        Returns:
-            Resposta do modelo
-        """
-        return self.ask_ollama(prompt)
-
-
-if __name__ == "__main__":
-    # Exemplo de uso
-    ia = IA(modelo_ai="llama3.2")
-
-    prompt = "Explique o que é balanceamento de carga em sistemas distribuídos."
-    resposta = ia.process(prompt)
-    print("Resposta Ollama:", resposta)
+        if self.pipe is None:
+            return "Modelo não carregado."
+        result = self.pipe(prompt, max_length=100, do_sample=True)[0]["generated_text"]
+        return result

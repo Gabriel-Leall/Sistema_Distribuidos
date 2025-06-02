@@ -22,6 +22,8 @@ services:
       - loadbalance2
     volumes:
       - ./resultados:/resultados
+    environment:
+      - MATPLOTLIBRC=/dev/null  
     networks:
       - sdnet
     

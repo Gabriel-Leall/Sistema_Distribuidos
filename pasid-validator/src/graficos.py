@@ -1,54 +1,88 @@
 import json
 import matplotlib.pyplot as plt
-from collections import defaultdict
+import numpy as np
 
-def gerar_grafico_mrt_por_taxa_geracao(caminho_json: str, modo='num_services', titulo='MRT por Taxa de Geração', nome_arquivo='grafico_mrt.png'):
-    """
-    Gera gráfico de linha com MRT médio em função da taxa de geração e exporta como PNG.
-
-    modo: 
-        - 'num_services': cada linha representa uma quantidade diferente de serviços.
-        - 'tipo_servico': cada linha representa um tipo de serviço.
-    nome_arquivo:
-        - Nome do arquivo PNG a ser salvo.
-    """
-
-    with open(caminho_json, 'r', encoding='utf-8') as f:
+def gerar_graficos_mrt(nome_arquivo: str = "resultados/resultados_mrt.json"):
+    """Gera 3 tipos de gráficos de linha analisando o MRT a partir do arquivo JSON"""
+    
+    # Carrega os dados do arquivo
+    with open(nome_arquivo, 'r', encoding='utf-8') as f:
         dados = json.load(f)
-
-    series = defaultdict(lambda: {'x': [], 'y': []})
-
-    for ciclo in dados.get('cycles', []):
-        num_services = ciclo.get('num_services', 0)
-        mrt = ciclo.get('mrt_media_ms', 0)
-        taxa_geracao = ciclo.get('taxa_geracao', None)
-
-        if taxa_geracao is None:
-            continue
-
-        if modo == 'num_services':
-            chave = f"{num_services} serviços"
-        elif modo == 'tipo_servico':
-            chave = ciclo.get('tipo_servico', 'desconhecido')
-        else:
-            raise ValueError("Modo inválido. Use 'num_services' ou 'tipo_servico'.")
-
-        series[chave]['x'].append(taxa_geracao)
-        series[chave]['y'].append(mrt)
-
+    
+    if not dados['cycles']:
+        print("Nenhum dado de ciclo encontrado para gerar gráficos")
+        return
+    
+    # Gráfico 1: Evolução do MRT médio por ciclo
     plt.figure(figsize=(10, 6))
-    for chave, valores in series.items():
-        x = valores['x']
-        y = valores['y']
-        pares_ordenados = sorted(zip(x, y), key=lambda p: p[0])
-        x_ord, y_ord = zip(*pares_ordenados)
-        plt.plot(x_ord, y_ord, marker='o', label=chave)
-
-    plt.title(titulo)
-    plt.xlabel('Taxa de Geração (msg/s)')
-    plt.ylabel('MRT Médio (ms)')
+    for ciclo in dados['cycles']:
+        if 'alimentacao' in ciclo:
+            continue  # Pula ciclos de alimentação
+            
+        # Calcula MRT médio para cada mensagem no ciclo (suavizado)
+        tempos = ciclo['tempos_ms']
+        mrt_cumulativo = [np.mean(tempos[:i+1]) for i in range(len(tempos))]
+        
+        plt.plot(range(1, len(tempos)+1), mrt_cumulativo, 
+                label=f"{ciclo['num_services']} serviço(s)")
+    
+    plt.title("Evolução do MRT Médio por Mensagem (Cumulativo)")
+    plt.xlabel("Número da Mensagem")
+    plt.ylabel("MRT (ms)")
     plt.legend()
     plt.grid(True)
+    plt.savefig("resultados/mrt_evolucao_cumulativa.png")
+    plt.close()
+    
+    # Gráfico 2: Comparação de MRT por quantidade de serviços
+    plt.figure(figsize=(10, 6))
+    servicos_mrt = {}
+    
+    for ciclo in dados['cycles']:
+        if 'alimentacao' in ciclo:
+            continue
+            
+        num_serv = ciclo['num_services']
+        if num_serv not in servicos_mrt:
+            servicos_mrt[num_serv] = []
+        servicos_mrt[num_serv].extend(ciclo['tempos_ms'])
+    
+    for num_serv, tempos in servicos_mrt.items():
+        # Agrupa tempos em lotes para suavizar
+        lotes = [tempos[i:i+10] for i in range(0, len(tempos), 10)]
+        medias = [np.mean(lote) for lote in lotes if lote]
+        
+        plt.plot(range(len(medias)), medias, 
+               label=f"{num_serv} serviço(s)", 
+               marker='o')
+    
+    plt.title("MRT por Quantidade de Serviços")
+    plt.xlabel("Lote de Mensagens (10 mensagens/lote)")
+    plt.ylabel("MRT (ms)")
+    plt.legend()
+    plt.grid(True)
+    plt.savefig("resultados/mrt_por_servico.png")
+    plt.close()
+    
+    # Gráfico 3: Distribuição dos MRTs individuais
+    plt.figure(figsize=(12, 6))
+    
+    for ciclo in dados['cycles']:
+        if 'alimentacao' in ciclo:
+            continue
+            
+        tempos = ciclo['tempos_ms']
+        plt.plot(tempos, 
+               label=f"Ciclo {ciclo['cycle_index']} - {ciclo['num_services']} serviço(s)",
+               alpha=0.6)
+    
+    plt.title("Distribuição Individual dos Tempos de Resposta")
+    plt.xlabel("Número da Mensagem")
+    plt.ylabel("MRT Individual (ms)")
+    plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+    plt.grid(True)
     plt.tight_layout()
-    plt.savefig(nome_arquivo, dpi=300)  # Salva como PNG com alta resolução
-    plt.close()  # Fecha a figura para liberar memória
+    plt.savefig("resultados/mrt_distribuicao_individual.png")
+    plt.close()
+
+    print("Gráficos gerados em: resultados/mrt_*.png")

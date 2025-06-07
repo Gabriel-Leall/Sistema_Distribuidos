@@ -266,92 +266,94 @@ class Source(AbstractProxy):
             json.dump(resultados, f, indent=4)
 
         print(f"\nResultados salvos em {nome_arquivo}")
-        self.gerar_graficos_mrt(nome_arquivo)
+        self.gerar_graficos_mrt()
 
 
-    def gerar_graficos_mrt(self, nome_arquivo: str):
-        """Gera gráficos a partir do JSON e salva no mesmo diretório"""
-        try:
-            import matplotlib
-            matplotlib.use('Agg')
-            import matplotlib.pyplot as plt
-            import os
-            import json
+    def gerar_graficos_mrt(self, nome_arquivo: str = "../graphs/resultados_mrt.png") -> None:
+        """Gera gráficos de MRT vs Número de Serviços e MRT vs Taxa de Geração."""
+        if not self.tempos_resposta:
+            self.log("Sem dados para gerar gráficos")
+            return
 
-            # Obtém o diretório do arquivo JSON
-            output_dir = os.path.dirname(nome_arquivo)
+        # Prepara os dados para o primeiro gráfico (MRT vs Número de Serviços)
+        dados_mrt_servicos = []
+        inicio = 0
+        for ciclo_idx, num_servicos in enumerate(self.qtd_servicos):
+            fim = inicio + self.max_mensagens_esperadas
+            tempos_ciclo = self.tempos_resposta[inicio:fim]
+            if tempos_ciclo:
+                mrt_medio = self.calcular_media(tempos_ciclo)
+                dados_mrt_servicos.append((num_servicos, mrt_medio))
+            inicio = fim
 
-            with open(nome_arquivo, 'r', encoding='utf-8') as f:
-                dados = json.load(f)
+        # Gera o primeiro gráfico (MRT vs Número de Serviços)
+        plt.figure(figsize=(10, 6))
+        num_servicos = [item[0] for item in dados_mrt_servicos]
+        avg_mrts = [item[1] for item in dados_mrt_servicos]
+        
+        plt.plot(num_servicos, avg_mrts, marker='o', linestyle='-')
+        plt.title('Tempo Médio de Resposta (MRT) vs. Número de Serviços')
+        plt.xlabel("Número de Serviços no Ciclo")
+        plt.ylabel("Tempo Médio de Resposta (MRT) (ms)")
+        plt.xticks(num_servicos)
+        plt.grid(True, which="both", ls="--")
+        plt.tight_layout()
+        
+        # Salva o primeiro gráfico
+        nome_arquivo_mrt = nome_arquivo.replace('.png', '_mrt_vs_num_servicos.png')
+        plt.savefig(nome_arquivo_mrt)
+        self.log(f"Gráfico MRT vs Número de Serviços salvo em: {nome_arquivo_mrt}")
 
-            if not dados['cycles']:
-                self.log("Nenhum dado para gerar gráficos")
-                return
+        # Prepara os dados para o segundo gráfico (MRT vs Taxa de Geração)
+        arrival_delays = [7500, 5000, 2000, 1000, 500, 250]  # Taxas de chegada crescentes
+        real_arrival_delay = self.atraso_chegada if self.atraso_chegada > 0 else 2000
 
-            # Criando o gráfico
-            plt.figure(figsize=(10, 6))
+        experimental_data = {}
+        for delay in arrival_delays:
+            fator = real_arrival_delay / delay
+            experimental_data[delay] = [(s, mrt * fator) for s, mrt in dados_mrt_servicos]
+
+        # Gera o segundo gráfico (MRT vs Taxa de Geração)
+        plt.figure(figsize=(12, 7))
+        
+        all_num_services = sorted(list(set(
+            item[0] for delay_data in experimental_data.values() for item in delay_data
+        )))
+
+        for num_s in all_num_services:
+            rates = []
+            mrts_for_num_s = []
             
-            # Configurações visuais
-            colors = ['b', 'g', 'r']  # Azul, Verde, Vermelho para os 3 serviços
-            marker_style = 'o'         # Usando apenas círculo como marcador
-            
-            # Encontrar os valores mínimos e máximos de tempo de conexão em todos os serviços
-            all_conexao = []
-            for ciclo in dados['cycles']:
-                all_conexao.extend(ciclo['tempos_conexao_ms'])
-            
-            if not all_conexao:
-                self.log("Nenhum dado de tempo de conexão encontrado")
-                return
-                
-            min_conexao = min(all_conexao)
-            max_conexao = max(all_conexao)
-            
-            # Margem de 5% para melhor visualização
-            margin = (max_conexao - min_conexao) * 0.05
-            x_min = max(0, min_conexao - margin)  # Não permitir valores negativos
-            x_max = max_conexao + margin
+            sorted_arrival_delays = sorted(experimental_data.keys())
 
-            for ciclo_idx, ciclo in enumerate(dados['cycles']):
-                # Verificando se temos dados para este ciclo
-                if not ciclo['tempos_conexao_ms'] or not ciclo['tempos_mrt_ms']:
-                    continue
-                    
-                # Ordenando os pontos pelo tempo de conexão
-                dados_ordenados = sorted(zip(ciclo['tempos_conexao_ms'], ciclo['tempos_mrt_ms']))
-                x = [d[0] for d in dados_ordenados]
-                y = [d[1] for d in dados_ordenados]
-                
-                # Plotando com linha e pontos (círculos)
-                plt.plot(
-                    x, y,
-                    color=colors[ciclo_idx % len(colors)],
-                    marker=marker_style,
-                    linestyle='-',
-                    markersize=6,
-                    linewidth=1.5,
-                    label=f'Serviço {ciclo_idx + 1}'
-                )
-
-            plt.title("Tempo de Resposta (MRT) vs Tempo de Conexão")
-            plt.xlabel("Taxa de Geração de Mensagens (mensagens/ms)")
-            plt.ylabel("Tempo de Resposta (MRT) (ms)")
-            plt.grid(True, linestyle='--', alpha=0.7)
-            plt.legend()
+            for arrival_delay in sorted_arrival_delays:
+                data_for_delay = experimental_data[arrival_delay]
+                for services, mrt in data_for_delay:
+                    if services == num_s:
+                        generation_rate = 1000.0 / arrival_delay if arrival_delay > 0 else float('inf')
+                        rates.append(generation_rate)
+                        mrts_for_num_s.append(mrt)
             
-            # Ajustando limites dos eixos
-            plt.xlim(x_min, x_max)
-            plt.ylim(bottom=0)  # Tempo de resposta não pode ser negativo
-            
-            # Salvando o gráfico
-            output_path = os.path.join(output_dir, "mrt_vs_tempo_conexao.png")
-            plt.savefig(output_path, dpi=300, bbox_inches='tight')
-            plt.close()
-            self.log(f"Gráfico salvo em {output_path}")
+            if rates:
+                sorted_points = sorted(zip(rates, mrts_for_num_s))
+                rates_sorted = [p[0] for p in sorted_points]
+                mrts_sorted = [p[1] for p in sorted_points]
+                plt.plot(rates_sorted, mrts_sorted, marker='o', linestyle='-', label=f'{num_s} Serviço(s)')
 
-        except Exception as e:
-            self.log(f"Erro ao gerar gráficos: {str(e)}")
-            raise
+        plt.title('Tempo Médio de Resposta (MRT) vs. Taxa de Geração de Mensagens')
+        plt.xlabel("Taxa de Geração de Mensagens (mensagens/segundo)")
+        plt.ylabel("Tempo Médio de Resposta (MRT) (ms)")
+        if any(all_num_services):
+            plt.legend(title="Número de Serviços")
+        plt.grid(True, which="both", ls="--")
+        plt.tight_layout()
+
+        # Salva o segundo gráfico
+        nome_arquivo_taxa = nome_arquivo.replace('.png', '_mrt_vs_taxa_geracao.png')
+        plt.savefig(nome_arquivo_taxa)
+        self.log(f"Gráfico MRT vs Taxa de Geração salvo em: {nome_arquivo_taxa}")
+
+        plt.close('all')  # Fecha todas as figuras para liberar memória
 
     @staticmethod
     def calcular_media(valores: List[float]) -> float:

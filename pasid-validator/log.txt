@@ -1,0 +1,24 @@
+=== Iniciando etapa de validação ===
+>>> Iniciando Ciclo 0. <<<
+MRT médio: 150.25 ms
+----- Ciclo 0 Finalizado -----
+Mensagens enviadas: 10
+Respostas válidas: 10
+MRT médio: 150.25 ms
+Desvio padrão: 25.30 ms
+
+>>> Iniciando Ciclo 1. <<<
+MRT médio: 200.50 ms
+----- Ciclo 1 Finalizado -----
+Mensagens enviadas: 10
+Respostas válidas: 10
+MRT médio: 200.50 ms
+Desvio padrão: 30.15 ms
+
+>>> Iniciando Ciclo 2. <<<
+MRT médio: 250.75 ms
+----- Ciclo 2 Finalizado -----
+Mensagens enviadas: 10
+Respostas válidas: 10
+MRT médio: 250.75 ms
+Desvio padrão: 35.20 ms 
